@@ -23,7 +23,7 @@ const CategoryItem = ({
 
   return (
     <Link
-      href={`${path}?category=${category.slug}`}
+      href={`${path}?category=${encodeURIComponent(category.slug)}`}
       className={`group flex items-center justify-between ease-out duration-200 hover:text-blue ${
         selected ? "text-blue" : ""
       }`}

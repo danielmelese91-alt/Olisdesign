@@ -9,6 +9,8 @@ import { addItemToCart } from "@/redux/features/cart-slice";
 import Image from "next/image";
 import Link from "next/link";
 import { addItemToWishlist } from "@/redux/features/wishlist-slice";
+import { getProductPath } from "@/lib/routes";
+import { formatETB } from "@/lib/currency";
 
 const SingleItem = ({ item }: { item: Product }) => {
   const { openModal } = useModalContext();
@@ -41,9 +43,22 @@ const SingleItem = ({ item }: { item: Product }) => {
 
   return (
     <div className="group">
-      <div className="relative overflow-hidden rounded-lg bg-[#F6F7FB] min-h-[403px]">
-        <div className="text-center px-4 py-7.5">
-          <div className="flex items-center justify-center gap-2.5 mb-2">
+      <div className="relative overflow-hidden rounded-lg bg-[#F6F7FB]">
+        <Link
+          href={getProductPath(item)}
+          className="flex min-h-[300px] items-center justify-center px-4 pt-6"
+        >
+          <Image
+            src={item.imgs.previews[0]}
+            alt={item.title}
+            width={280}
+            height={280}
+            className="max-h-[280px] w-auto object-contain duration-300 group-hover:scale-[1.03]"
+          />
+        </Link>
+
+        <div className="px-4 pb-7 pt-4 text-center">
+          <div className="mb-2 flex items-center justify-center gap-2.5">
             <div className="flex items-center gap-1">
               <Image
                 src="/images/icons/icon-star.svg"
@@ -81,17 +96,13 @@ const SingleItem = ({ item }: { item: Product }) => {
           </div>
 
           <h3 className="font-medium text-dark ease-out duration-200 hover:text-blue mb-1.5">
-            <Link href="/shop-details"> {item.title} </Link>
+            <Link href={getProductPath(item)}> {item.title} </Link>
           </h3>
 
           <span className="flex items-center justify-center gap-2 font-medium text-lg">
-            <span className="text-dark">${item.discountedPrice}</span>
-            <span className="text-dark-4 line-through">${item.price}</span>
+            <span className="text-dark">{formatETB(item.discountedPrice)}</span>
+            <span className="text-dark-4 line-through">{formatETB(item.price)}</span>
           </span>
-        </div>
-
-        <div className="flex justify-center items-center">
-          <Image src={item.imgs.previews[0]} alt="" width={280} height={280} />
         </div>
 
         <div className="absolute right-0 bottom-0 translate-x-full u-w-full flex flex-col gap-2 p-5.5 ease-linear duration-300 group-hover:translate-x-0">

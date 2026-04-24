@@ -34,6 +34,7 @@ function normalizeSlug(value?: string) {
 
 const Categories = () => {
   const [categories, setCategories] = useState<CategoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const sliderRef = useRef(null);
 
   const handlePrev = useCallback(() => {
@@ -68,18 +69,24 @@ const Categories = () => {
 
         if (!active) return;
 
-        setCategories(
-          fetchedCategories.map((category) => ({
-            id: category._id,
-            title: category.title || "Untitled Category",
-            slug: category.slug || normalizeSlug(category.title) || category._id,
-            img:
-              imageRefToUrl(category.image) ||
-              "/images/categories/categories-01.png",
-          }))
-        );
-      } catch (error) {
-        console.error("Failed to load categories:", error);
+        const mappedCategories = fetchedCategories.map((category) => ({
+          id: category._id,
+          title: category.title || "Untitled Category",
+          slug: category.slug || normalizeSlug(category.title) || category._id,
+          img:
+            imageRefToUrl(category.image) ||
+            "/images/categories/categories-01.png",
+        }));
+
+        setCategories(mappedCategories);
+      } catch {
+        if (active) {
+          setCategories([]);
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
@@ -89,6 +96,10 @@ const Categories = () => {
       active = false;
     };
   }, []);
+
+  if (!loading && categories.length === 0) {
+    return null;
+  }
 
   return (
     <section className="overflow-hidden pt-17.5">
@@ -140,6 +151,13 @@ const Categories = () => {
             </div>
 
             <div className="flex items-center gap-3">
+              <a
+                href="/shop"
+                className="hidden rounded-full border border-[#d8cfbb] px-4 py-2 text-sm font-medium text-dark transition hover:border-gold hover:text-gold sm:inline-flex"
+              >
+                All Collections
+              </a>
+
               <button onClick={handlePrev} className="swiper-button-prev">
                 <svg
                   className="fill-current"
@@ -202,6 +220,15 @@ const Categories = () => {
               </SwiperSlide>
             ))}
           </Swiper>
+
+          <div className="mt-8 flex justify-center sm:hidden">
+            <a
+              href="/shop"
+              className="rounded-full border border-[#d8cfbb] px-5 py-2.5 text-sm font-medium text-dark transition hover:border-gold hover:text-gold"
+            >
+              All Collections
+            </a>
+          </div>
         </div>
       </div>
     </section>

@@ -61,9 +61,9 @@ export type FooterNavSection = {
 };
 
 const defaultSettings: SiteSettings = {
-  siteTitle: "Olies Design | Luxury Fashion Addis Ababa",
+  siteTitle: "Oli's Design | Luxury Fashion Addis Ababa",
   metaDescription: "Exquisite fashion from the heart of Addis Ababa.",
-  brandName: "Olies Design",
+  brandName: "Oli's Design",
   logoUrl: null,
   faviconUrl: null,
   openGraphImageUrl: null,
@@ -87,7 +87,7 @@ const fallbackFooterSections: FooterNavSection[] = [
   {
     title: "House",
     items: [
-      { label: "Collections", url: "/shop-with-sidebar", openInNewTab: false },
+      { label: "Collections", url: "/shop", openInNewTab: false },
       { label: "Our Story", url: "/blogs/blog-grid", openInNewTab: false },
       { label: "Atelier Journal", url: "/blogs/blog-grid", openInNewTab: false },
       { label: "Contact", url: "/contact", openInNewTab: false },

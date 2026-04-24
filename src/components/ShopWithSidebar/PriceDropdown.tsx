@@ -1,14 +1,30 @@
-import { useState } from 'react';
-import RangeSlider from 'react-range-slider-input';
-import 'react-range-slider-input/dist/style.css';
+import { useEffect, useState } from "react";
+import RangeSlider from "react-range-slider-input";
+import "react-range-slider-input/dist/style.css";
+import { formatETB } from "@/lib/currency";
 
-const PriceDropdown = () => {
+type PriceDropdownProps = {
+  minPrice: number;
+  maxPrice: number;
+  selectedRange: [number, number];
+  onChange: (range: [number, number]) => void;
+};
+
+const PriceDropdown = ({
+  minPrice,
+  maxPrice,
+  selectedRange,
+  onChange,
+}: PriceDropdownProps) => {
   const [toggleDropdown, setToggleDropdown] = useState(true);
 
-  const [selectedPrice, setSelectedPrice] = useState({
-    from: 0,
-    to: 100,
-  });
+  useEffect(() => {
+    onChange([minPrice, maxPrice]);
+  }, [maxPrice, minPrice]);
+
+  if (maxPrice <= minPrice) {
+    return null;
+  }
 
   return (
     <div className="bg-white shadow-1 rounded-lg">
@@ -18,11 +34,11 @@ const PriceDropdown = () => {
       >
         <p className="text-dark">Price</p>
         <button
-          onClick={() => setToggleDropdown(!toggleDropdown)}
+          type="button"
           id="price-dropdown-btn"
           aria-label="button for price dropdown"
           className={`text-dark ease-out duration-200 ${
-            toggleDropdown && 'rotate-180'
+            toggleDropdown && "rotate-180"
           }`}
         >
           <svg
@@ -43,40 +59,31 @@ const PriceDropdown = () => {
         </button>
       </div>
 
-      {/* // <!-- dropdown menu --> */}
-      <div className={`p-6 ${toggleDropdown ? 'block' : 'hidden'}`}>
-        <div id="pricingOne">
-          <div className="price-range">
-            <RangeSlider
-              id="range-slider-gradient"
-              className="margin-lg"
-              step={'any'}
-              onInput={(e) =>
-                setSelectedPrice({
-                  from: Math.floor(e[0]),
-                  to: Math.ceil(e[1]),
-                })
-              }
-            />
+      <div className={`p-6 ${toggleDropdown ? "block" : "hidden"}`}>
+        <div className="price-range">
+          <RangeSlider
+            id="range-slider-gradient"
+            className="margin-lg"
+            min={minPrice}
+            max={maxPrice}
+            step={100}
+            value={selectedRange}
+            onInput={(value) =>
+              onChange([Math.floor(value[0]), Math.ceil(value[1])])
+            }
+          />
 
-            <div className="price-amount flex items-center justify-between pt-4">
-              <div className="text-custom-xs text-dark-4 flex rounded border border-gray-3/80">
-                <span className="block border-r border-gray-3/80 px-2.5 py-1.5">
-                  $
-                </span>
-                <span id="minAmount" className="block px-3 py-1.5">
-                  {selectedPrice.from}
-                </span>
-              </div>
+          <div className="price-amount flex items-center justify-between gap-2 pt-4">
+            <div className="text-custom-xs text-dark-4 flex rounded border border-gray-3/80">
+              <span className="block px-3 py-1.5">
+                {formatETB(selectedRange[0])}
+              </span>
+            </div>
 
-              <div className="text-custom-xs text-dark-4 flex rounded border border-gray-3/80">
-                <span className="block border-r border-gray-3/80 px-2.5 py-1.5">
-                  $
-                </span>
-                <span id="maxAmount" className="block px-3 py-1.5">
-                  {selectedPrice.to}
-                </span>
-              </div>
+            <div className="text-custom-xs text-dark-4 flex rounded border border-gray-3/80">
+              <span className="block px-3 py-1.5">
+                {formatETB(selectedRange[1])}
+              </span>
             </div>
           </div>
         </div>

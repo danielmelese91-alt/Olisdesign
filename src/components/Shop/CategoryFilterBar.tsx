@@ -46,7 +46,7 @@ const CategoryFilterBar = ({
             return (
               <Link
                 key={category.id}
-                href={`${path}?category=${category.slug}`}
+                href={`${path}?category=${encodeURIComponent(category.slug)}`}
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                   isActive
                     ? "border-[#121212] bg-[#121212] text-white"

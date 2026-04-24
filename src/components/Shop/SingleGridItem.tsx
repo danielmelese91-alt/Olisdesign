@@ -10,6 +10,7 @@ import { AppDispatch } from "@/redux/store";
 import Link from "next/link";
 import Image from "next/image";
 import { formatETB } from "@/lib/currency";
+import { getProductPath } from "@/lib/routes";
 
 const SingleGridItem = ({ item }: { item: Product }) => {
   const { openModal } = useModalContext();
@@ -149,7 +150,7 @@ const SingleGridItem = ({ item }: { item: Product }) => {
       </div>
 
       <h3 className="font-medium text-dark ease-out duration-200 hover:text-blue mb-1.5">
-        <Link href="/shop-details"> {item.title} </Link>
+        <Link href={getProductPath(item)}> {item.title} </Link>
       </h3>
 
       {item.category ? (

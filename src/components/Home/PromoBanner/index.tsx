@@ -18,6 +18,7 @@ type SanityBanner = {
 
 type BannerData = {
   id: string;
+  eyebrow: string;
   title: string;
   subtitle: string;
   buttonText: string;
@@ -29,38 +30,64 @@ type BannerData = {
 const defaultBanners: BannerData[] = [
   {
     id: "promo-1",
+    eyebrow: "Oli's Design Edit",
     title: "Luxury Fashion, Tailored For Addis",
     subtitle:
       "Discover ceremonial dressing, modern tailoring, and refined accessories designed to move from private fittings to grand occasions.",
     buttonText: "Discover The Collection",
     image: "/images/promo/promo-01.png",
     bgColor: "#F5F0E8",
-    categoryPath: "#",
+    categoryPath: "/shop",
   },
   {
     id: "promo-2",
+    eyebrow: "Ceremonial Dressing",
     title: "Ceremony, Reimagined",
     subtitle: "Hand-finished silhouettes",
     buttonText: "View Traditional Wear",
     image: "/images/promo/promo-02.png",
     bgColor: "#EADFCF",
-    categoryPath: "#",
+    categoryPath: "/shop?category=traditional",
   },
   {
     id: "promo-3",
+    eyebrow: "Finishing Details",
     title: "Finishing touches with timeless restraint",
     subtitle:
       "Scarves, belts, and occasion pieces crafted to complete the Olies Design wardrobe.",
     buttonText: "Shop Accessories",
     image: "/images/promo/promo-03.png",
     bgColor: "#FFECE1",
-    categoryPath: "#",
+    categoryPath: "/shop?category=accessories",
   },
 ];
+
+function normalizeBannerHref(value?: string) {
+  if (!value || value === "#") {
+    return "/shop";
+  }
+
+  if (value.startsWith("/shop") || value.startsWith("/products/")) {
+    return value;
+  }
+
+  if (value.startsWith("http")) {
+    return value;
+  }
+
+  const slug = value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return slug ? `/shop?category=${slug}` : "/shop";
+}
 
 const mapBanners = (items: SanityBanner[]): BannerData[] =>
   items.slice(0, 3).map((item, index) => ({
     id: item._id,
+    eyebrow: defaultBanners[index]?.eyebrow || "Oli's Design",
     title: item.title || defaultBanners[index]?.title || "Banner Title",
     subtitle: item.subtitle || defaultBanners[index]?.subtitle || "",
     buttonText:
@@ -68,7 +95,9 @@ const mapBanners = (items: SanityBanner[]): BannerData[] =>
     image:
       imageRefToUrl(item.image) || defaultBanners[index]?.image || "/images/promo/promo-01.png",
     bgColor: item.bgColor || defaultBanners[index]?.bgColor,
-    categoryPath: item.categoryPath || defaultBanners[index]?.categoryPath || "#",
+    categoryPath: normalizeBannerHref(
+      item.categoryPath || defaultBanners[index]?.categoryPath
+    ),
   }));
 
 const PromoBanner = () => {
@@ -96,8 +125,10 @@ const PromoBanner = () => {
         }
 
         setBanners(mapBanners(fetched));
-      } catch (error) {
-        console.error("Failed to fetch banner data:", error);
+      } catch {
+        if (active) {
+          setBanners(defaultBanners);
+        }
       }
     }
 
@@ -110,27 +141,28 @@ const PromoBanner = () => {
   const [heroBanner, leftBanner, rightBanner] = banners;
 
   return (
-    <section className="overflow-hidden py-20">
+    <section className="overflow-hidden py-14 sm:py-20">
       <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
         <div
-          className="relative z-1 overflow-hidden rounded-lg py-12.5 lg:py-17.5 xl:py-22.5 px-4 sm:px-7.5 lg:px-14 xl:px-19 mb-7.5"
+          className="relative z-1 mb-7.5 overflow-hidden rounded-[6px] px-5 py-12.5 sm:px-7.5 lg:px-14 lg:py-17.5 xl:px-19 xl:py-22.5"
           style={heroBanner.bgColor ? { backgroundColor: heroBanner.bgColor } : undefined}
         >
           <div className="max-w-[550px] w-full relative z-10">
-            <span className="block font-medium text-base sm:text-xl text-dark mb-3">
-              {heroBanner.title}
+            <span className="mb-3 block text-[11px] font-medium uppercase tracking-[0.24em] text-gold sm:text-xs">
+              {heroBanner.eyebrow}
             </span>
 
-            <h2 className="font-bold text-lg sm:text-xl lg:text-heading-4 xl:text-heading-3 text-dark mb-5">
+            <h2 className="mb-5 max-w-[520px] font-serif-display text-3xl font-semibold leading-tight text-navy sm:text-4xl lg:text-heading-4 xl:text-heading-3">
               {heroBanner.title}
             </h2>
 
-            <p className="hidden sm:block text-sm sm:text-base">{heroBanner.subtitle}</p>
-            <p className="sm:hidden text-xs sm:text-sm text-dark/80 mb-4">{heroBanner.subtitle}</p>
+            <p className="max-w-[510px] text-sm leading-relaxed text-dark-3 sm:text-base">
+              {heroBanner.subtitle}
+            </p>
 
             <a
               href={heroBanner.categoryPath || "#"}
-              className="inline-flex font-medium text-custom-sm text-white bg-blue py-[11px] px-9.5 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
+              className="mt-7.5 inline-flex rounded-[4px] bg-navy px-9.5 py-[11px] text-custom-sm font-medium text-white duration-200 ease-out hover:bg-gold hover:text-navy"
             >
               {heroBanner.buttonText}
             </a>
@@ -146,7 +178,7 @@ const PromoBanner = () => {
           <Image
             src={heroBanner.image}
             alt={heroBanner.title}
-            className="absolute inset-0 -z-1 sm:hidden opacity-30"
+            className="absolute inset-0 -z-1 opacity-25 sm:hidden"
             fill
             style={{ objectFit: 'cover' }}
           />
@@ -154,7 +186,7 @@ const PromoBanner = () => {
 
         <div className="grid gap-7.5 grid-cols-1 lg:grid-cols-2">
           <div
-            className="relative z-1 overflow-hidden rounded-lg py-10 xl:py-16 px-4 sm:px-7.5 xl:px-10"
+            className="relative z-1 overflow-hidden rounded-[6px] px-5 py-10 sm:px-7.5 xl:px-10 xl:py-16"
             style={leftBanner.bgColor ? { backgroundColor: leftBanner.bgColor } : undefined}
           >
             <Image
@@ -172,25 +204,22 @@ const PromoBanner = () => {
               style={{ objectFit: 'cover' }}
             />
 
-            <div className="relative z-10">
-              <span className="block text-base sm:text-lg text-dark mb-1.5">
-                {leftBanner.title}
+            <div className="relative z-10 max-w-[340px]">
+              <span className="mb-2 block text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
+                {leftBanner.eyebrow}
               </span>
 
-              <h2 className="font-bold text-lg sm:text-xl lg:text-heading-4 text-dark mb-2.5">
+              <h2 className="mb-3 font-serif-display text-2xl font-semibold leading-tight text-navy sm:text-3xl lg:text-heading-4">
                 {leftBanner.title}
               </h2>
 
-              <p className="font-semibold text-sm sm:text-custom-1 text-teal hidden sm:block">
-                {leftBanner.subtitle}
-              </p>
-              <p className="font-semibold text-xs sm:text-sm text-teal sm:hidden">
+              <p className="text-sm leading-relaxed text-dark-3 sm:text-base">
                 {leftBanner.subtitle}
               </p>
 
               <a
                 href={leftBanner.categoryPath || "#"}
-                className="inline-flex font-medium text-custom-sm text-white bg-teal py-2.5 px-8.5 rounded-md ease-out duration-200 hover:bg-teal-dark mt-9"
+                className="mt-8 inline-flex rounded-[4px] bg-navy px-8.5 py-2.5 text-custom-sm font-medium text-white duration-200 ease-out hover:bg-gold hover:text-navy"
               >
                 {leftBanner.buttonText}
               </a>
@@ -198,7 +227,7 @@ const PromoBanner = () => {
           </div>
 
           <div
-            className="relative z-1 overflow-hidden rounded-lg py-10 xl:py-16 px-4 sm:px-7.5 xl:px-10"
+            className="relative z-1 overflow-hidden rounded-[6px] px-5 py-10 sm:px-7.5 xl:px-10 xl:py-16"
             style={rightBanner.bgColor ? { backgroundColor: rightBanner.bgColor } : undefined}
           >
             <Image
@@ -216,25 +245,22 @@ const PromoBanner = () => {
               style={{ objectFit: 'cover' }}
             />
 
-            <div className="relative z-10">
-              <span className="block text-base sm:text-lg text-dark mb-1.5">
-                {rightBanner.title}
+            <div className="relative z-10 max-w-[340px]">
+              <span className="mb-2 block text-[11px] font-medium uppercase tracking-[0.22em] text-gold">
+                {rightBanner.eyebrow}
               </span>
 
-              <h2 className="font-bold text-lg sm:text-xl lg:text-heading-4 text-dark mb-2.5">
+              <h2 className="mb-3 font-serif-display text-2xl font-semibold leading-tight text-navy sm:text-3xl lg:text-heading-4">
                 {rightBanner.title}
               </h2>
 
-              <p className="max-w-[285px] text-sm sm:text-custom-sm hidden sm:block">
-                {rightBanner.subtitle}
-              </p>
-              <p className="max-w-[200px] text-xs sm:text-sm text-dark/80 sm:hidden">
+              <p className="text-sm leading-relaxed text-dark-3 sm:text-base">
                 {rightBanner.subtitle}
               </p>
 
               <a
                 href={rightBanner.categoryPath || "#"}
-                className="inline-flex font-medium text-custom-sm text-white bg-orange py-2.5 px-8.5 rounded-md ease-out duration-200 hover:bg-orange-dark mt-7.5"
+                className="mt-8 inline-flex rounded-[4px] bg-navy px-8.5 py-2.5 text-custom-sm font-medium text-white duration-200 ease-out hover:bg-gold hover:text-navy"
               >
                 {rightBanner.buttonText}
               </a>

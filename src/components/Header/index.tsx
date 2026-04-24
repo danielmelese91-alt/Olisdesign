@@ -96,6 +96,10 @@ const Header = ({
 
   const product = useAppSelector((state) => state.cartReducer.items);
   const totalPrice = useSelector(selectTotalPrice);
+  const brandName =
+    settings.brandName?.trim().toLowerCase() === "olies design"
+      ? "Oli's Design"
+      : settings.brandName || "Oli's Design";
 
   useEffect(() => {
     const handleStickyMenu = () => {
@@ -148,48 +152,53 @@ const Header = ({
         <div className="mx-auto max-w-[1360px] px-4 sm:px-7.5 xl:px-6">
           <div
             className={`duration-200 ease-out ${
-              stickyMenu ? "py-2.5" : "py-3"
+              stickyMenu ? "py-2" : "py-2.5"
             }`}
           >
             <div className="xl:hidden">
               <Link href="/" className="block">
                 <div className="flex flex-col items-start">
-                  <img
-                    src="/images/logo/Logo.png"
-                    alt={settings.brandName}
-                    className="h-10 w-[210px] object-contain object-left opacity-95"
-                  />
-                  <span className="mt-1.5 block text-[8px] uppercase tracking-[0.28em] text-white/45 sm:text-[11px]">
+                  <div className="flex items-center gap-2">
+                    <img
+                      src="/images/logo/Logo-mark.png"
+                      alt={brandName}
+                      className="h-8 w-auto object-contain opacity-95"
+                    />
+                    <span className="font-serif-display text-base font-semibold leading-none text-gold">
+                      {brandName}
+                    </span>
+                  </div>
+                  <span className="mt-1 block text-[7px] uppercase tracking-[0.24em] text-white/45 sm:text-[10px]">
                     Exquisite fashion from Addis Ababa
                   </span>
                 </div>
               </Link>
 
-              <div className="mt-4 flex items-center justify-between gap-3">
+              <div className="mt-3 flex items-center justify-between gap-2.5">
                 <button
                   type="button"
                   aria-label="Open search"
-                  className="flex h-11 w-11 items-center justify-center text-white transition-colors duration-200 hover:text-white/80"
+                  className="flex h-10 w-10 items-center justify-center text-white transition-colors duration-200 hover:text-white/80"
                   onClick={toggleMobileSearch}
                 >
                   {searchIcon}
                 </button>
 
-                <Link href="/signin" className="flex min-w-0 items-center gap-3">
+                <Link href="/signin" className="flex min-w-0 items-center gap-2">
                   <span className="text-gold" aria-hidden="true">
                     {accountIcon}
                   </span>
                   <div>
-                    <span className="block text-[10px] uppercase tracking-[0.14em] text-white/40">
+                    <span className="block text-[9px] uppercase tracking-[0.14em] text-white/40">
                       account
                     </span>
-                    <p className="text-[20px] font-medium leading-none text-white">
+                    <p className="text-[16px] font-medium leading-none text-white">
                       Sign In
                     </p>
                   </div>
                 </Link>
 
-                <button onClick={openCartModal} className="flex min-w-0 items-center gap-3">
+                <button onClick={openCartModal} className="flex min-w-0 items-center gap-2">
                   <span className="relative inline-block text-[#4a5dff]">
                     {cartIcon}
 
@@ -199,10 +208,10 @@ const Header = ({
                   </span>
 
                   <div>
-                    <span className="block text-[10px] uppercase tracking-[0.14em] text-white/40">
+                    <span className="block text-[9px] uppercase tracking-[0.14em] text-white/40">
                       cart
                     </span>
-                    <p className="text-[18px] font-medium leading-none text-white">
+                    <p className="text-[15px] font-medium leading-none text-white">
                       {formatETB(totalPrice)}
                     </p>
                   </div>
@@ -253,17 +262,17 @@ const Header = ({
             <div className="hidden xl:flex xl:flex-row xl:items-center xl:justify-between xl:gap-8">
               <div className="flex items-center justify-between gap-4 xl:w-[34%]">
                 <Link href="/" className="flex min-w-0 items-center gap-4 lg:gap-5">
-                  <div className="flex-shrink-0 rounded-[18px] bg-white/4 px-3 py-2 ring-1 ring-white/10 backdrop-blur-[2px]">
+                  <div className="flex-shrink-0 rounded-[14px] bg-white/4 px-3 py-2 ring-1 ring-white/10 backdrop-blur-[2px]">
                     <img
-                      src="/images/logo/Logo.png"
-                      alt={settings.brandName}
-                      style={{ height: 82, width: "auto", objectFit: "contain" }}
+                      src="/images/logo/Logo-mark.png"
+                      alt={brandName}
+                      className="h-12 w-auto object-contain"
                     />
                   </div>
 
                   <div className="min-w-0">
                     <p className="truncate font-serif-display text-xl font-semibold tracking-[0.03em] text-white sm:text-2xl">
-                      {settings.brandName}
+                      {brandName}
                     </p>
                     <span className="mt-1 block max-w-[220px] text-[11px] uppercase tracking-[0.22em] text-white/45 sm:max-w-[280px]">
                       Exquisite fashion from Addis Ababa
@@ -306,7 +315,7 @@ const Header = ({
 
                   <div>
                     <span className="block text-2xs uppercase text-white/40">
-                      {settings.brandName}
+                      {brandName}
                     </span>
                     <p className="text-custom-sm font-medium text-white">
                       Addis Ababa Atelier
@@ -417,27 +426,7 @@ const Header = ({
                 </nav>
               </div>
 
-              <div className="hidden xl:block">
-                <ul className="flex flex-wrap items-center gap-x-5.5 gap-y-1">
-                  <li className="py-4">
-                    <Link
-                      href="/blogs/blog-grid"
-                      className="flex items-center gap-1.5 text-custom-sm font-medium text-white/70 hover:text-gold"
-                    >
-                      Atelier Notes
-                    </Link>
-                  </li>
-
-                  <li className="py-4">
-                    <Link
-                      href="/wishlist"
-                      className="flex items-center gap-1.5 text-custom-sm font-medium text-white/70 hover:text-gold"
-                    >
-                      Saved Pieces
-                    </Link>
-                  </li>
-                </ul>
-              </div>
+              <div className="hidden xl:block" aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -449,7 +438,7 @@ const Header = ({
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <p className="font-serif-display text-2xl text-gold">
-                  Search {settings.brandName}
+                  Search {brandName}
                 </p>
                 <p className="mt-1 text-sm text-white/50">
                   Find collections, tailoring, and signature details.

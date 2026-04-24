@@ -1,5 +1,5 @@
 import React from "react";
-import ShopWithoutSidebar from "@/components/ShopWithoutSidebar";
+import ShopWithSidebar from "@/components/ShopWithSidebar";
 import {
   getStorefrontCategories,
   getStorefrontProducts,
@@ -8,7 +8,7 @@ import {
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const ShopWithoutSidebarPage = async ({
+const ShopPage = async ({
   searchParams,
 }: {
   searchParams?: Promise<{ category?: string; collection?: string }>;
@@ -23,14 +23,14 @@ const ShopWithoutSidebarPage = async ({
 
   return (
     <main>
-      <ShopWithoutSidebar
+      <ShopWithSidebar
         products={products}
         categories={categories}
         currentCategory={currentCategory}
-        path="/shop-without-sidebar"
+        path="/shop"
       />
     </main>
   );
 };
 
-export default ShopWithoutSidebarPage;
+export default ShopPage;

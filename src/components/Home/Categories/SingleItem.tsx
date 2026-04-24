@@ -11,7 +11,7 @@ type CategoryItem = {
 
 const SingleItem = ({ item }: { item: CategoryItem }) => {
   return (
-    <Link href={`/category/${item.slug}`} className="group flex flex-col items-center">
+    <Link href={`/shop?category=${item.slug}`} className="group flex flex-col items-center">
       <div className="flex items-center justify-center mb-4">
         <div
           className="rounded-full overflow-hidden border border-gray-200 shadow-sm"

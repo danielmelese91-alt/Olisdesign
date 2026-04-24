@@ -2,19 +2,6 @@ import type { Metadata } from "next";
 import "./css/euclid-circular-a-font.css";
 import "./css/style.css";
 import { getSiteSettings } from "@/sanity/lib/globals";
-import { Playfair_Display, Montserrat } from "next/font/google";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-});
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  variable: "--font-montserrat",
-  display: "swap",
-});
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -47,9 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body className={`${playfair.variable} ${montserrat.variable}`}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

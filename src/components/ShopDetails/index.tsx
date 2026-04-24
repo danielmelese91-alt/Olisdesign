@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
 import Image from "next/image";
 import Newsletter from "../Common/Newsletter";
@@ -7,8 +7,18 @@ import RecentlyViewdItems from "./RecentlyViewd";
 import { usePreviewSlider } from "@/app/context/PreviewSliderContext";
 import { useAppSelector } from "@/redux/store";
 import { formatETB } from "@/lib/currency";
+import { Product } from "@/types/product";
 
-const ShopDetails = () => {
+const emptyProduct: Product = {
+  title: "",
+  reviews: 0,
+  price: 0,
+  discountedPrice: 0,
+  id: 0,
+  imgs: { thumbnails: [], previews: [] },
+};
+
+const ShopDetails = ({ product: productProp }: { product?: Product }) => {
   const [activeColor, setActiveColor] = useState("blue");
   const { openPreviewModal } = usePreviewSlider();
   const [previewImg, setPreviewImg] = useState(0);
@@ -76,15 +86,35 @@ const ShopDetails = () => {
 
   const colors = ["red", "blue", "orange", "pink", "purple"];
 
-  const alreadyExist = localStorage.getItem("productDetails");
   const productFromStorage = useAppSelector(
     (state) => state.productDetailsReducer.value
   );
+  const [storedProduct, setStoredProduct] = useState<Product | null>(null);
 
-  const product = alreadyExist ? JSON.parse(alreadyExist) : productFromStorage;
+  const product = productProp || storedProduct || productFromStorage || emptyProduct;
 
   useEffect(() => {
-    localStorage.setItem("productDetails", JSON.stringify(product));
+    if (productProp) {
+      return;
+    }
+
+    const item = window.localStorage.getItem("productDetails");
+
+    if (!item) {
+      return;
+    }
+
+    try {
+      setStoredProduct(JSON.parse(item));
+    } catch {
+      window.localStorage.removeItem("productDetails");
+    }
+  }, [productProp]);
+
+  useEffect(() => {
+    if (product.title) {
+      window.localStorage.setItem("productDetails", JSON.stringify(product));
+    }
   }, [product]);
 
   // pass the product here when you get the real data.

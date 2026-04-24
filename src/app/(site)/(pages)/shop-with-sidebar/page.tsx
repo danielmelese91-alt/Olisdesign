@@ -11,10 +11,11 @@ export const revalidate = 0;
 const ShopWithSidebarPage = async ({
   searchParams,
 }: {
-  searchParams?: Promise<{ category?: string }>;
+  searchParams?: Promise<{ category?: string; collection?: string }>;
 }) => {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const currentCategory = resolvedSearchParams?.category;
+  const currentCategory =
+    resolvedSearchParams?.category || resolvedSearchParams?.collection;
   const [products, categories] = await Promise.all([
     getStorefrontProducts(currentCategory),
     getStorefrontCategories(),

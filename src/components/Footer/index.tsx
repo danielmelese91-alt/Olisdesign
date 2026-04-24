@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { FooterNavSection, SiteSettings } from "@/sanity/lib/globals";
 
@@ -34,30 +33,29 @@ const Footer = ({
   settings: SiteSettings;
 }) => {
   const year = new Date().getFullYear();
+  const brandName =
+    settings.brandName?.trim().toLowerCase() === "olies design"
+      ? "Oli's Design"
+      : settings.brandName || "Oli's Design";
 
   return (
     <footer className="overflow-hidden">
-      <div className="max-w-[1170px] mx-auto px-4 sm:px-8 xl:px-0">
-        <div className="flex flex-wrap xl:flex-nowrap gap-10 xl:gap-19 xl:justify-between pt-17.5 xl:pt-22.5 pb-10 xl:pb-15">
-          <div className="max-w-[330px] w-full">
+      <div className="mx-auto max-w-[1170px] px-4 sm:px-8 xl:px-0">
+        <div className="flex flex-wrap gap-10 pb-10 pt-14 sm:pt-17.5 xl:flex-nowrap xl:justify-between xl:gap-19 xl:pb-15 xl:pt-22.5">
+          <div className="mx-auto max-w-[330px] w-full lg:mx-0">
             <div className="mb-7.5 text-center lg:text-left">
               <img
-                src="/images/logo/Logo.png"
-                alt={settings.brandName}
-                style={{
-                  width: "auto",
-                  marginBottom: 16,
-                  display: "block",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  objectFit: "contain",
-                }}
-                className="h-[156px] lg:h-[220px] lg:mx-0"
+                src="/images/logo/Logo-mark.png"
+                alt={brandName}
+                className="mx-auto mb-4 h-16 w-auto object-contain lg:mx-0 lg:h-[72px]"
               />
+              <h2 className="font-serif-display text-2xl font-semibold text-dark">
+                {brandName}
+              </h2>
               <p className="mt-2 text-sm">{settings.metaDescription}</p>
             </div>
 
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-left">
               <li>Bole Road, Addis Ababa, Ethiopia.</li>
               <li>
                 <a href="#" className="ease-out duration-200 hover:text-blue">
@@ -73,12 +71,12 @@ const Footer = ({
           </div>
 
           {footerSections.map((section) => (
-            <div className="w-full sm:w-auto" key={section.title}>
-              <h2 className="mb-7.5 text-custom-1 font-medium text-dark">
+            <div className="w-full text-center sm:w-auto lg:text-left" key={section.title}>
+              <h2 className="mb-5 text-custom-1 font-medium text-dark lg:mb-7.5">
                 {section.title}
               </h2>
 
-              <ul className="flex flex-col gap-3.5">
+              <ul className="flex flex-col items-center gap-3 lg:items-start lg:gap-3.5">
                 {section.items.map((item) => (
                   <li key={`${section.title}-${item.label}`}>
                     <Link
@@ -95,19 +93,19 @@ const Footer = ({
             </div>
           ))}
 
-          <div className="w-full sm:w-auto">
-            <h2 className="mb-7.5 text-custom-1 font-medium text-dark lg:text-right">
+          <div className="w-full text-center sm:w-auto lg:text-right">
+            <h2 className="mb-5 text-custom-1 font-medium text-dark lg:mb-7.5">
               Concierge
             </h2>
 
-            <p className="lg:text-right text-custom-sm mb-4">
+            <p className="mb-4 max-w-[300px] text-custom-sm mx-auto lg:mx-0">
               Private fittings, delivery guidance, and bespoke assistance.
             </p>
 
-            <ul className="flex flex-col lg:items-end gap-3">
+            <ul className="flex flex-col items-center gap-3 lg:items-end">
               <li>
                 <a
-                  className="inline-flex items-center gap-3 py-[9px] pl-4 pr-7.5 text-white rounded-md bg-dark ease-out duration-200 hover:bg-opacity-95"
+                  className="inline-flex w-[260px] items-center justify-center gap-3 rounded-md bg-dark px-4 py-[10px] text-white duration-200 ease-out hover:bg-opacity-95"
                   href="#"
                 >
                   <div>
@@ -119,7 +117,7 @@ const Footer = ({
 
               <li>
                 <a
-                  className="inline-flex items-center gap-3 py-[9px] pl-4 pr-8.5 text-white rounded-md bg-blue ease-out duration-200 hover:bg-opacity-95"
+                  className="inline-flex w-[260px] items-center justify-center gap-3 rounded-md bg-gold px-4 py-[10px] text-white duration-200 ease-out hover:bg-opacity-95"
                   href="#"
                 >
                   <div>
@@ -133,27 +131,31 @@ const Footer = ({
         </div>
       </div>
 
-      <div className="py-5 xl:py-7.5 bg-gray-1">
-        <div className="max-w-[1170px] mx-auto px-4 sm:px-8 xl:px-0">
-          <div className="flex gap-5 flex-wrap items-center justify-between">
-            <div className="flex flex-wrap items-center gap-4">
+      <div className="bg-gray-1 py-5 pb-14 xl:py-7.5">
+        <div className="mx-auto max-w-[1170px] px-4 sm:px-8 xl:px-0">
+          <div className="flex flex-wrap items-center justify-center gap-5 lg:justify-between">
+            <div className="flex w-full flex-col items-center gap-4 lg:w-auto lg:flex-row">
               <p className="font-medium">We Accept:</p>
 
-              <div className="flex flex-wrap items-center gap-6">
+              <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
                 {paymentLogos.map((logo) => (
-                  <span key={logo.name} aria-label={logo.name}>
+                  <span
+                    key={logo.name}
+                    aria-label={logo.name}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-gold/30 bg-[#f8f3ea] shadow-sm sm:h-14 sm:w-14"
+                  >
                     <img
                       src={logo.src}
                       alt={logo.alt}
-                      style={{ height: 36, width: "auto", objectFit: "contain" }}
+                      className="max-h-5 max-w-8 object-contain sm:max-h-7 sm:max-w-10"
                     />
                   </span>
                 ))}
               </div>
             </div>
 
-            <p className="text-dark font-medium">
-              &copy; {year}. All rights reserved by {settings.brandName}.
+            <p className="w-full text-center text-dark font-medium lg:w-auto lg:text-left">
+              &copy; {year}. All rights reserved by {brandName}.
             </p>
           </div>
         </div>

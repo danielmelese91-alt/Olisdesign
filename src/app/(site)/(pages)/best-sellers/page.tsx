@@ -1,14 +1,14 @@
 import React from "react";
-import ShopWithoutSidebar from "@/components/ShopWithoutSidebar";
+import ShopWithSidebar from "@/components/ShopWithSidebar";
 import {
+  getBestSellerProducts,
   getStorefrontCategories,
-  getStorefrontProducts,
 } from "@/sanity/lib/storefront";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const ShopWithoutSidebarPage = async ({
+const BestSellersPage = async ({
   searchParams,
 }: {
   searchParams?: Promise<{ category?: string; collection?: string }>;
@@ -17,20 +17,21 @@ const ShopWithoutSidebarPage = async ({
   const currentCategory =
     resolvedSearchParams?.category || resolvedSearchParams?.collection;
   const [products, categories] = await Promise.all([
-    getStorefrontProducts(currentCategory),
+    getBestSellerProducts(currentCategory),
     getStorefrontCategories(),
   ]);
 
   return (
     <main>
-      <ShopWithoutSidebar
+      <ShopWithSidebar
         products={products}
         categories={categories}
         currentCategory={currentCategory}
-        path="/shop-without-sidebar"
+        path="/best-sellers"
+        title="Best Sellers"
       />
     </main>
   );
 };
 
-export default ShopWithoutSidebarPage;
+export default BestSellersPage;

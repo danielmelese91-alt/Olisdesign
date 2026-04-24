@@ -19,6 +19,7 @@ type SanityCategoryReference = {
 
 type SanityProduct = {
   _id: string;
+  _createdAt?: string;
   title?: string;
   slug?: { current?: string };
   category?: SanityCategoryReference;
@@ -103,7 +104,7 @@ const heroSlideFallback: HeroSlide[] = [
     description:
       "Hand-embroidered ceremonial gowns crafted with generations of artisan mastery.",
     cta: "Explore Bridal",
-    href: "/shop?collection=bridal",
+    href: "/shop?category=bridal",
     imagePosition: "left",
   },
   {
@@ -114,7 +115,7 @@ const heroSlideFallback: HeroSlide[] = [
     description:
       "Contemporary silhouettes infused with iconic Ethiopian motifs.",
     cta: "Shop the Edit",
-    href: "/shop?collection=traditional",
+    href: "/shop?category=traditional",
     imagePosition: "left",
   },
   {
@@ -124,7 +125,7 @@ const heroSlideFallback: HeroSlide[] = [
     title: "Crafted for Moments That Matter",
     description: "Statement pieces that command attention for grand celebrations.",
     cta: "View Collection",
-    href: "/shop?collection=evening",
+    href: "/shop?category=evening",
     imagePosition: "left",
   },
 ];
@@ -153,6 +154,24 @@ function normalizeSlug(value?: string) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function normalizeStorefrontHref(value?: string) {
+  if (!value || value === "#") {
+    return "/shop";
+  }
+
+  if (value.startsWith("/shop") || value.startsWith("/products/")) {
+    return value;
+  }
+
+  if (value.startsWith("http")) {
+    return value;
+  }
+
+  const slug = normalizeSlug(value);
+
+  return slug ? `/shop?category=${slug}` : "/shop";
 }
 
 function toStorefrontProduct(product: SanityProduct): Product {
@@ -204,7 +223,7 @@ function toHeroSlide(slide: SanityHeroSlide, index: number): HeroSlide {
     title: slide.title || fallbackSlide.title,
     description: slide.description || fallbackSlide.description,
     cta: slide.ctaText || fallbackSlide.cta,
-    href: slide.ctaLink || fallbackSlide.href,
+    href: normalizeStorefrontHref(slide.ctaLink || fallbackSlide.href),
     imagePosition: slide.imagePosition || fallbackSlide.imagePosition,
   };
 }
@@ -261,6 +280,7 @@ export async function getStorefrontProducts(categorySlug?: string) {
       (!defined($categorySlug) || category->slug.current == $categorySlug)
     ] | order(_createdAt desc) {
       _id,
+      _createdAt,
       title,
       slug,
       "category": category->{
@@ -273,7 +293,11 @@ export async function getStorefrontProducts(categorySlug?: string) {
       material,
       colorVariants,
       description,
-      images
+      images,
+      isFeatured,
+      isBestSeller,
+      isSignatureArrival,
+      badge
     }`,
     { categorySlug: categorySlug ?? null }
   );
@@ -283,6 +307,36 @@ export async function getStorefrontProducts(categorySlug?: string) {
   }
 
   return products.map((product) => toStorefrontProduct(product));
+}
+
+export async function getStorefrontProductBySlug(slug: string) {
+  noStore();
+
+  const product = await client.fetch<SanityProduct | null>(
+    groq`*[_type == "product" && slug.current == $slug][0] {
+      _id,
+      title,
+      slug,
+      "category": category->{
+        title,
+        "slug": slug.current
+      },
+      price,
+      discountedPrice,
+      size,
+      material,
+      colorVariants,
+      description,
+      images,
+      isFeatured,
+      isBestSeller,
+      isSignatureArrival,
+      badge
+    }`,
+    { slug }
+  );
+
+  return product ? toStorefrontProduct(product) : null;
 }
 
 export async function getFeaturedProducts() {
@@ -351,6 +405,45 @@ export async function getBestSellers() {
   return products.map((product) => toStorefrontProduct(product));
 }
 
+export async function getBestSellerProducts(categorySlug?: string) {
+  noStore();
+
+  const products = await client.fetch<SanityProduct[]>(
+    groq`*[
+      _type == "product" &&
+      isBestSeller == true &&
+      (!defined($categorySlug) || category->slug.current == $categorySlug)
+    ] | order(_createdAt desc) {
+      _id,
+      _createdAt,
+      title,
+      slug,
+      "category": category->{
+        title,
+        "slug": slug.current
+      },
+      price,
+      discountedPrice,
+      size,
+      material,
+      colorVariants,
+      description,
+      images,
+      isFeatured,
+      isBestSeller,
+      isSignatureArrival,
+      badge
+    }`,
+    { categorySlug: categorySlug ?? null }
+  );
+
+  if (!products?.length) {
+    return [];
+  }
+
+  return products.map((product) => toStorefrontProduct(product));
+}
+
 export async function getSignatureArrivals() {
   noStore();
 
@@ -382,6 +475,77 @@ export async function getSignatureArrivals() {
   }
 
   return products.map((product) => toStorefrontProduct(product));
+}
+
+export async function getNewArrivalProducts(categorySlug?: string) {
+  noStore();
+
+  const flaggedProducts = await client.fetch<SanityProduct[]>(
+    groq`*[
+      _type == "product" &&
+      isSignatureArrival == true &&
+      (!defined($categorySlug) || category->slug.current == $categorySlug)
+    ] | order(_createdAt desc) {
+      _id,
+      _createdAt,
+      title,
+      slug,
+      "category": category->{
+        title,
+        "slug": slug.current
+      },
+      price,
+      discountedPrice,
+      size,
+      material,
+      colorVariants,
+      description,
+      images,
+      isFeatured,
+      isBestSeller,
+      isSignatureArrival,
+      badge
+    }`,
+    { categorySlug: categorySlug ?? null }
+  );
+
+  if (flaggedProducts?.length) {
+    return flaggedProducts.map((product) => toStorefrontProduct(product));
+  }
+
+  const newestProducts = await client.fetch<SanityProduct[]>(
+    groq`*[
+      _type == "product" &&
+      (!defined($categorySlug) || category->slug.current == $categorySlug)
+    ] | order(_createdAt desc) {
+      _id,
+      _createdAt,
+      title,
+      slug,
+      "category": category->{
+        title,
+        "slug": slug.current
+      },
+      price,
+      discountedPrice,
+      size,
+      material,
+      colorVariants,
+      description,
+      images,
+      isFeatured,
+      isBestSeller,
+      isSignatureArrival,
+      badge
+    }`,
+    { categorySlug: categorySlug ?? null }
+  );
+
+  if (!newestProducts?.length) {
+    return [];
+  }
+
+  return newestProducts.map((product) => toStorefrontProduct(product));
 }
 
 export async function getHeroSlides() {

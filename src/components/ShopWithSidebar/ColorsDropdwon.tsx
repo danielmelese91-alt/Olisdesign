@@ -1,11 +1,22 @@
 "use client";
 import React, { useState } from "react";
 
-const ColorsDropdwon = () => {
-  const [toggleDropdown, setToggleDropdown] = useState(true);
-  const [activeColor, setActiveColor] = useState("blue");
+type ColorsDropdownProps = {
+  colors: string[];
+  selectedColor: string | null;
+  onChange: (color: string | null) => void;
+};
 
-  const colors = ["red", "blue", "orange", "pink", "purple"];
+const ColorsDropdwon = ({
+  colors,
+  selectedColor,
+  onChange,
+}: ColorsDropdownProps) => {
+  const [toggleDropdown, setToggleDropdown] = useState(true);
+
+  if (!colors.length) {
+    return null;
+  }
 
   return (
     <div className="bg-white shadow-1 rounded-lg">
@@ -17,6 +28,7 @@ const ColorsDropdwon = () => {
       >
         <p className="text-dark">Colors</p>
         <button
+          type="button"
           aria-label="button for colors dropdown"
           className={`text-dark ease-out duration-200 ${
             toggleDropdown && "rotate-180"
@@ -40,40 +52,36 @@ const ColorsDropdwon = () => {
         </button>
       </div>
 
-      {/* <!-- dropdown menu --> */}
       <div
         className={`flex-wrap gap-2.5 p-6 ${
           toggleDropdown ? "flex" : "hidden"
         }`}
       >
-        {colors.map((color, key) => (
-          <label
-            key={key}
-            htmlFor={color}
-            className="cursor-pointer select-none flex items-center"
-          >
-            <div className="relative">
-              <input
-                type="radio"
-                name="color"
-                id={color}
-                className="sr-only"
-                onChange={() => setActiveColor(color)}
-              />
-              <div
-                className={`flex items-center justify-center w-5.5 h-5.5 rounded-full ${
-                  activeColor === color && "border"
+        {colors.map((color) => {
+          const selected = selectedColor === color;
+
+          return (
+            <button
+              key={color}
+              type="button"
+              aria-label={`Filter by color ${color}`}
+              onClick={() => onChange(selected ? null : color)}
+              className="flex cursor-pointer items-center"
+            >
+              <span
+                className={`flex h-6 w-6 items-center justify-center rounded-full ${
+                  selected ? "border" : ""
                 }`}
-                style={{ borderColor: `${color}` }}
+                style={{ borderColor: color }}
               >
                 <span
-                  className="block w-3 h-3 rounded-full"
-                  style={{ backgroundColor: `${color}` }}
-                ></span>
-              </div>
-            </div>
-          </label>
-        ))}
+                  className="block h-3.5 w-3.5 rounded-full"
+                  style={{ backgroundColor: color }}
+                />
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

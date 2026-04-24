@@ -1,10 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
 import CategoryFilterBar from "../Shop/CategoryFilterBar";
 import CustomSelect from "./CustomSelect";
 import CategoryDropdown from "./CategoryDropdown";
-import GenderDropdown from "./GenderDropdown";
 import SizeDropdown from "./SizeDropdown";
 import ColorsDropdwon from "./ColorsDropdwon";
 import PriceDropdown from "./PriceDropdown";
@@ -18,15 +17,30 @@ const ShopWithSidebar = ({
   categories,
   currentCategory,
   path,
+  title = "Explore All Products",
 }: {
   products: Product[];
   categories: StorefrontCategory[];
   currentCategory?: string;
   path: string;
+  title?: string;
 }) => {
   const [productStyle, setProductStyle] = useState("grid");
   const [productSidebar, setProductSidebar] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const priceBounds = useMemo<[number, number]>(() => {
+    if (!products.length) {
+      return [0, 0];
+    }
+
+    const prices = products.map((product) => product.discountedPrice || product.price || 0);
+
+    return [Math.min(...prices), Math.max(...prices)];
+  }, [products]);
+  const [selectedPriceRange, setSelectedPriceRange] =
+    useState<[number, number]>(priceBounds);
 
   const handleStickyMenu = () => {
     if (window.scrollY >= 80) {
@@ -42,23 +56,41 @@ const ShopWithSidebar = ({
     { label: "Old Products", value: "2" },
   ];
 
-  const genders = [
-    {
-      name: "Tailored",
-      products: Math.max(products.filter((item) => item.category === "Men's Suits").length, 1),
-    },
-    {
-      name: "Traditional",
-      products: Math.max(
-        products.filter((item) => item.category === "Traditional Wear").length,
-        1
+  const availableSizes = useMemo(
+    () =>
+      Array.from(
+        new Set(products.flatMap((product) => product.size ?? []))
+      ).sort(),
+    [products]
+  );
+  const availableColors = useMemo(
+    () =>
+      Array.from(
+        new Set(products.flatMap((product) => product.colorSwatches ?? []))
       ),
-    },
-    {
-      name: "Accessories",
-      products: Math.max(products.filter((item) => item.category === "Accessories").length, 1),
-    },
-  ];
+    [products]
+  );
+  const filteredProducts = useMemo(
+    () =>
+      products.filter((product) => {
+        const price = product.discountedPrice || product.price || 0;
+        const matchesSize =
+          !selectedSize || product.size?.includes(selectedSize as NonNullable<Product["size"]>[number]);
+        const matchesColor =
+          !selectedColor || product.colorSwatches?.includes(selectedColor);
+        const matchesPrice =
+          price >= selectedPriceRange[0] && price <= selectedPriceRange[1];
+
+        return matchesSize && matchesColor && matchesPrice;
+      }),
+    [products, selectedColor, selectedPriceRange, selectedSize]
+  );
+
+  useEffect(() => {
+    setSelectedSize(null);
+    setSelectedColor(null);
+    setSelectedPriceRange(priceBounds);
+  }, [currentCategory, priceBounds]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
@@ -82,8 +114,8 @@ const ShopWithSidebar = ({
   return (
     <>
       <Breadcrumb
-        title={"Explore All Products"}
-        pages={["shop", "/", "shop with sidebar"]}
+        title={title}
+        pages={["shop", "/", title.toLowerCase()]}
       />
       <section className="overflow-hidden relative pb-20 pt-5 lg:pt-20 xl:pt-28 bg-[#f3f4f6]">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
@@ -140,7 +172,17 @@ const ShopWithSidebar = ({
                   <div className="bg-white shadow-1 rounded-lg py-4 px-5">
                     <div className="flex items-center justify-between">
                       <p>Filters:</p>
-                      <button className="text-blue">Clean All</button>
+                      <button
+                        type="button"
+                        className="text-blue"
+                        onClick={() => {
+                          setSelectedSize(null);
+                          setSelectedColor(null);
+                          setSelectedPriceRange(priceBounds);
+                        }}
+                      >
+                        Clean All
+                      </button>
                     </div>
                   </div>
 
@@ -151,17 +193,27 @@ const ShopWithSidebar = ({
                     path={path}
                   />
 
-                  {/* <!-- gender box --> */}
-                  <GenderDropdown genders={genders} />
-
                   {/* // <!-- size box --> */}
-                  <SizeDropdown />
+                  <SizeDropdown
+                    sizes={availableSizes}
+                    selectedSize={selectedSize}
+                    onChange={setSelectedSize}
+                  />
 
                   {/* // <!-- color box --> */}
-                  <ColorsDropdwon />
+                  <ColorsDropdwon
+                    colors={availableColors}
+                    selectedColor={selectedColor}
+                    onChange={setSelectedColor}
+                  />
 
                   {/* // <!-- price range box --> */}
-                  <PriceDropdown />
+                  <PriceDropdown
+                    minPrice={priceBounds[0]}
+                    maxPrice={priceBounds[1]}
+                    selectedRange={selectedPriceRange}
+                    onChange={setSelectedPriceRange}
+                  />
                 </div>
               </form>
             </div>
@@ -178,6 +230,13 @@ const ShopWithSidebar = ({
                     <p>
                       Showing <span className="text-dark">{products.length}</span>{" "}
                       Pieces
+                      {filteredProducts.length !== products.length && (
+                        <>
+                          {" "}
+                          / <span className="text-dark">{filteredProducts.length}</span>{" "}
+                          matching
+                        </>
+                      )}
                     </p>
                   </div>
 
@@ -270,8 +329,8 @@ const ShopWithSidebar = ({
                     : "flex flex-col gap-7.5"
                 }`}
               >
-                {products.length ? (
-                  products.map((item, key) =>
+                {filteredProducts.length ? (
+                  filteredProducts.map((item, key) =>
                     productStyle === "grid" ? (
                       <SingleGridItem item={item} key={key} />
                     ) : (

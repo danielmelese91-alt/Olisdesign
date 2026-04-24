@@ -8,7 +8,7 @@ const featureData = [
       </svg>
     ),
     title: "Atelier Delivery",
-    description: "Complimentary in Addis",
+    description: "In Addis",
   },
   {
     icon: (
@@ -17,7 +17,7 @@ const featureData = [
       </svg>
     ),
     title: "Fitting Revisions",
-    description: "Perfect drape, guaranteed",
+    description: "Guaranteed",
   },
   {
     icon: (
@@ -26,7 +26,7 @@ const featureData = [
       </svg>
     ),
     title: "Secure Payments",
-    description: "Protected checkout",
+    description: "Checkout",
   },
   {
     icon: (
@@ -35,7 +35,7 @@ const featureData = [
       </svg>
     ),
     title: "Concierge Support",
-    description: "Styling help, anytime",
+    description: "Anytime",
   },
 ];
 
@@ -46,17 +46,19 @@ const HeroFeature = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-gold/10">
           {featureData.map((item, key) => (
             <div
-              className="flex items-center gap-3 py-4 lg:py-6 px-3 lg:px-6 group"
+              className="group flex items-center gap-2 px-2 py-3 sm:gap-3 sm:px-3 sm:py-4 lg:px-6 lg:py-6"
               key={key}
             >
-              <div className="flex-shrink-0 w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-navy-900 transition-all duration-300">
+              <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold transition-all duration-300 group-hover:bg-gold group-hover:text-navy-900 sm:h-8 sm:w-8 lg:h-10 lg:w-10">
                 {item.icon}
               </div>
               <div>
-                <h3 className="font-medium text-xs lg:text-sm text-white">
+                <h3 className="text-[11px] font-medium leading-tight text-white sm:text-xs lg:text-sm">
                   {item.title}
                 </h3>
-                <p className="text-[10px] lg:text-xs text-gray-5">{item.description}</p>
+                <p className="text-[9px] text-gray-5 sm:text-[10px] lg:text-xs">
+                  {item.description}
+                </p>
               </div>
             </div>
           ))}

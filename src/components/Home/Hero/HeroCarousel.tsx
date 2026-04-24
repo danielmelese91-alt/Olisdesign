@@ -55,7 +55,7 @@ const HeroCarousel = ({ slides }: { slides: HeroSlide[] }) => {
                           className="object-cover object-center"
                           priority={index === 0}
                           sizes="(min-width: 1024px) 58vw, 100vw"
-                          quality={90}
+                          quality={75}
                         />
                       </div>
                     </div>
@@ -110,7 +110,7 @@ const HeroCarousel = ({ slides }: { slides: HeroSlide[] }) => {
                       className="object-cover object-center"
                       priority={index === 0}
                       sizes="100vw"
-                      quality={85}
+                      quality={75}
                     />
                   </div>
                 </div>

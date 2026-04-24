@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Campaign } from "@/sanity/lib/storefront";
 
 interface CounDownProps {
@@ -8,24 +9,34 @@ interface CounDownProps {
 }
 
 const CounDown = ({ campaign }: CounDownProps) => {
-  const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number }>({
+  const [deadline, setDeadline] = useState<number | null>(null);
+  const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
   });
 
-  // Use campaign expiry date or default to 7 days from now
-  const deadline = campaign?.expiryDate 
-    ? new Date(campaign.expiryDate).getTime() 
-    : Date.now() + 7 * 24 * 60 * 60 * 1000;
+  useEffect(() => {
+    const campaignDeadline = campaign?.expiryDate
+      ? new Date(campaign.expiryDate).getTime()
+      : Number.NaN;
+
+    setDeadline(
+      Number.isFinite(campaignDeadline) && campaignDeadline > Date.now()
+        ? campaignDeadline
+        : Date.now() + 7 * 24 * 60 * 60 * 1000
+    );
+  }, [campaign?.expiryDate]);
 
   useEffect(() => {
-    // Calculate time remaining
+    if (!deadline) {
+      return;
+    }
+
     const calculateTime = () => {
-      const now = Date.now();
-      const diff = deadline - now;
-      
+      const diff = deadline - Date.now();
+
       if (diff > 0) {
         setTimeLeft({
           days: Math.floor(diff / (1000 * 60 * 60 * 24)),
@@ -38,109 +49,93 @@ const CounDown = ({ campaign }: CounDownProps) => {
       }
     };
 
-    // Calculate immediately
     calculateTime();
-
-    // Update every second
     const timer = setInterval(calculateTime, 1000);
 
-    // Cleanup
     return () => clearInterval(timer);
   }, [deadline]);
 
-  // Campaign data with fallbacks
-  const title = campaign?.title || "Don't Miss Out!";
-  const subtitle = campaign?.subtitle || "Discover our exclusive collection";
-  const buttonText = campaign?.buttonText || "Shop Now";
+  const title = campaign?.title || "A Curated Moment from the Atelier";
+  const subtitle =
+    campaign?.subtitle ||
+    "Limited pieces, private fittings, and refined occasionwear selected for this season.";
+  const buttonText = campaign?.buttonText || "Explore The Collection";
+  const timerItems = [
+    ["Days", timeLeft.days],
+    ["Hours", timeLeft.hours],
+    ["Minutes", timeLeft.minutes],
+    ["Seconds", timeLeft.seconds],
+  ];
 
   return (
-    <section className="overflow-hidden py-20">
-      <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
-        <div className="relative overflow-hidden z-1 rounded-lg bg-[#D0E9F3] p-4 sm:p-7.5 lg:p-10 xl:p-15">
-          <div className="max-w-[422px] w-full">
-            <span className="block font-medium text-custom-1 text-blue mb-2.5">
-              Don't Miss!!
-            </span>
+    <section className="overflow-hidden py-10 sm:py-18">
+      <div className="mx-auto w-full max-w-[1170px] px-4 sm:px-8 xl:px-0">
+        <div className="relative overflow-hidden rounded-[6px] border border-gold/25 bg-[#f8f3ea]">
+          <div className="grid items-stretch md:grid-cols-[1.08fr_0.92fr]">
+            <div className="relative z-10 px-5 py-6 sm:px-8 sm:py-9 lg:px-12 xl:px-15">
+              <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.24em] text-gold sm:mb-3 sm:text-[11px] sm:tracking-[0.28em]">
+                Atelier Campaign
+              </span>
 
-            <h2 className="font-bold text-dark text-xl lg:text-heading-4 xl:text-heading-3 mb-3">
-              {title}
-            </h2>
+              <h2 className="max-w-[560px] font-serif-display text-2xl font-semibold leading-tight text-navy sm:text-4xl lg:text-heading-3">
+                {title}
+              </h2>
 
-            <p>{subtitle}</p>
+              <p className="mt-2 max-w-[520px] text-sm leading-relaxed text-dark-3 sm:mt-4 sm:text-base">
+                {subtitle}
+              </p>
 
-            {/* <!-- Countdown timer --> */}
-            <div className="flex flex-wrap gap-4 sm:gap-6 mt-6">
-              {/* <!-- timer day --> */}
-              <div>
-                <span className="min-w-[50px] sm:min-w-[64px] h-12 sm:h-14.5 font-semibold text-lg sm:text-xl lg:text-3xl text-dark rounded-lg flex items-center justify-center bg-white shadow-2 px-3 sm:px-4 mb-2">
-                  {timeLeft.days < 10 ? "0" + timeLeft.days : timeLeft.days}
+              <div className="mt-5 border-t border-navy/10 pt-4 sm:mt-7 sm:pt-5">
+                <span className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-dark/55 sm:mb-3 sm:text-[11px] sm:tracking-[0.22em]">
+                  Available for
                 </span>
-                <span className="block text-xs sm:text-custom-sm text-dark text-center">
-                  Days
-                </span>
+
+                <div className="grid max-w-[430px] grid-cols-4 gap-2 sm:gap-4">
+                  {timerItems.map(([label, value]) => (
+                    <div key={label} className="text-center">
+                      <span className="flex h-10 items-center justify-center rounded-[4px] border border-navy/10 bg-white text-base font-semibold text-navy shadow-[0_12px_28px_rgba(20,31,57,0.08)] sm:h-14 sm:text-2xl">
+                        {Number(value) < 10 ? `0${value}` : value}
+                      </span>
+                      <span className="mt-1.5 block text-[10px] text-dark/65 sm:mt-2 sm:text-xs">
+                        {label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              {/* <!-- timer hours --> */}
-              <div>
-                <span className="min-w-[50px] sm:min-w-[64px] h-12 sm:h-14.5 font-semibold text-lg sm:text-xl lg:text-3xl text-dark rounded-lg flex items-center justify-center bg-white shadow-2 px-3 sm:px-4 mb-2">
-                  {timeLeft.hours < 10 ? "0" + timeLeft.hours : timeLeft.hours}
-                </span>
-                <span className="block text-xs sm:text-custom-sm text-dark text-center">
-                  Hours
-                </span>
-              </div>
-
-              {/* <!-- timer minutes --> */}
-              <div>
-                <span className="min-w-[50px] sm:min-w-[64px] h-12 sm:h-14.5 font-semibold text-lg sm:text-xl lg:text-3xl text-dark rounded-lg flex items-center justify-center bg-white shadow-2 px-3 sm:px-4 mb-2">
-                  {timeLeft.minutes < 10 ? "0" + timeLeft.minutes : timeLeft.minutes}
-                </span>
-                <span className="block text-xs sm:text-custom-sm text-dark text-center">
-                  Minutes
-                </span>
-              </div>
-
-              {/* <!-- timer seconds --> */}
-              <div>
-                <span className="min-w-[50px] sm:min-w-[64px] h-12 sm:h-14.5 font-semibold text-lg sm:text-xl lg:text-3xl text-dark rounded-lg flex items-center justify-center bg-white shadow-2 px-3 sm:px-4 mb-2">
-                  {timeLeft.seconds < 10 ? "0" + timeLeft.seconds : timeLeft.seconds}
-                </span>
-                <span className="block text-xs sm:text-custom-sm text-dark text-center">
-                  Seconds
-                </span>
-              </div>
+              <Link
+                href="/shop"
+                className="mt-5 inline-flex rounded-[4px] bg-navy px-7 py-2.5 text-sm font-medium text-white duration-200 ease-out hover:bg-gold hover:text-navy sm:mt-8 sm:px-8 sm:py-3"
+              >
+                {buttonText}
+              </Link>
             </div>
-            {/* <!-- Countdown timer ends --> */}
 
-            <a
-              href="#"
-              className="inline-flex font-medium text-custom-sm text-white bg-blue py-3 px-9.5 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
-            >
-              {buttonText}
-            </a>
+            <div className="relative hidden min-h-[220px] overflow-hidden bg-navy md:block lg:min-h-full">
+              {campaign?.productImage ? (
+                <Image
+                  src={campaign.productImage}
+                  alt="Campaign product"
+                  fill
+                  sizes="(min-width: 1024px) 520px, 100vw"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full min-h-[250px] items-center justify-center px-8 text-center">
+                  <div>
+                    <p className="font-serif-display text-5xl text-gold/90">
+                      Oli&apos;s
+                    </p>
+                    <p className="mt-3 text-[11px] uppercase tracking-[0.36em] text-white/45">
+                      Design Atelier
+                    </p>
+                  </div>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-navy/55 via-transparent to-transparent" />
+            </div>
           </div>
-
-          {/* <!-- product image from Sanity --> */}
-          {campaign?.productImage && (
-            <div className="hidden lg:block absolute right-4 xl:right-33 bottom-4 xl:bottom-10 -z-1">
-              <Image
-                src={campaign.productImage}
-                alt="Campaign product"
-                width={411}
-                height={376}
-                className="object-contain"
-              />
-            </div>
-          )}
-
-          {/* <!-- bg shapes --> */}
-          <Image
-            src="/images/countdown/countdown-bg.png"
-            alt="bg shapes"
-            className="hidden sm:block absolute right-0 bottom-0 -z-1"
-            width={737}
-            height={482}
-          />
         </div>
       </div>
     </section>
