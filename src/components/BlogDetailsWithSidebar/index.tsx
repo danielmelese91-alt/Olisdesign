@@ -1,13 +1,74 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
 import SearchForm from "../Blog/SearchForm";
 import LatestPosts from "../Blog/LatestPosts";
 import LatestProducts from "../Blog/LatestProducts";
 import blogData from "../BlogGrid/blogData";
 import Image from "next/image";
-import shopData from "../Shop/shopData"; 
+import { Product } from "@/types/product";
+import { client } from "@/sanity/lib/client";
+import { groq } from "next-sanity";
+import { imageRefToUrl } from "@/sanity/lib/image";
+
+function hashStringToNumber(value: string) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i++) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) || 1;
+}
 
 const BlogDetailsWithSidebar = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const data = await client.fetch(groq`*[_type == "product"] | order(_createdAt desc) [0...4] {
+          _id,
+          title,
+          slug,
+          "category": category->{ title },
+          price,
+          discountedPrice,
+          size,
+          material,
+          colorVariants,
+          description,
+          images
+        }`);
+        
+        const mapped = data.map((p: any) => ({
+          id: hashStringToNumber(p._id),
+          slug: p.slug?.current,
+          title: p.title || "Untitled",
+          reviews: 0,
+          price: p.price ?? 0,
+          discountedPrice: p.discountedPrice ?? p.price ?? 0,
+          category: p.category?.title || "Uncategorized",
+          categorySlug: p.slug?.current || "uncategorized",
+          size: p.size as Product["size"],
+          material: p.material,
+          colorSwatches: p.colorVariants?.map((v: any) => v.hex).filter(Boolean),
+          description: p.description,
+          imgs: {
+            previews: p.images?.map((i: any) => imageRefToUrl(i)).filter(Boolean) || [],
+            thumbnails: p.images?.map((i: any) => imageRefToUrl(i)).filter(Boolean) || [],
+          },
+        }));
+        setProducts(mapped);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
   return (
     <>
       <Breadcrumb
@@ -272,7 +333,18 @@ const BlogDetailsWithSidebar = () => {
               <LatestPosts blogs={blogData} />
 
               {/* <!-- Latest Products box --> */}
-              <LatestProducts products={shopData} />
+              {loading ? (
+                <div className="bg-white rounded-xl p-6">
+                  <div className="animate-pulse">Loading...</div>
+                </div>
+              ) : products.length > 0 ? (
+                <LatestProducts products={products} />
+              ) : (
+                <div className="bg-white rounded-xl p-6">
+                  <h2 className="font-medium text-lg text-dark mb-4">Latest Products</h2>
+                  <p className="text-gray-500">No products found. Add products in Sanity Studio.</p>
+                </div>
+              )}
 
               {/* <!-- Popular Category box --> */}
               <div className="shadow-1 bg-white rounded-xl mt-7.5">

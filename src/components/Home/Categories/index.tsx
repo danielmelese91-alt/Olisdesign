@@ -1,15 +1,39 @@
 "use client";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useCallback, useRef, useEffect } from "react";
-import data from "./categoryData";
-import Image from "next/image";
+import { useCallback, useRef, useEffect, useState } from "react";
+import { groq } from "next-sanity";
+import { client } from "@/sanity/lib/client";
+import { imageRefToUrl } from "@/sanity/lib/image";
 
 // Import Swiper styles
 import "swiper/css/navigation";
 import "swiper/css";
 import SingleItem from "./SingleItem";
 
+type CategoryItem = {
+  id: string;
+  title: string;
+  slug: string;
+  img: string;
+};
+
+type SanityCategory = {
+  _id: string;
+  title?: string;
+  slug?: string;
+  image?: { asset?: { _ref?: string } };
+};
+
+function normalizeSlug(value?: string) {
+  return value
+    ?.trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "";
+}
+
 const Categories = () => {
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
   const sliderRef = useRef(null);
 
   const handlePrev = useCallback(() => {
@@ -26,6 +50,44 @@ const Categories = () => {
     if (sliderRef.current) {
       sliderRef.current.swiper.init();
     }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadCategories() {
+      try {
+        const fetchedCategories = await client.fetch<SanityCategory[]>(
+          groq`*[_type == "category"] | order(title asc) {
+            _id,
+            title,
+            "slug": slug.current,
+            image
+          }`
+        );
+
+        if (!active) return;
+
+        setCategories(
+          fetchedCategories.map((category) => ({
+            id: category._id,
+            title: category.title || "Untitled Category",
+            slug: category.slug || normalizeSlug(category.title) || category._id,
+            img:
+              imageRefToUrl(category.image) ||
+              "/images/categories/categories-01.png",
+          }))
+        );
+      } catch (error) {
+        console.error("Failed to load categories:", error);
+      }
+    }
+
+    loadCategories();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
@@ -122,7 +184,7 @@ const Categories = () => {
             breakpoints={{
               // when window width is >= 640px
               0: {
-                slidesPerView: 2,
+                slidesPerView: 4,
               },
               1000: {
                 slidesPerView: 4,
@@ -134,8 +196,8 @@ const Categories = () => {
               },
             }}
           >
-            {data.map((item, key) => (
-              <SwiperSlide key={key}>
+            {categories.map((item) => (
+              <SwiperSlide key={item.id}>
                 <SingleItem item={item} />
               </SwiperSlide>
             ))}

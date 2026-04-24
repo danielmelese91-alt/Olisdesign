@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Link from "next/link";
 import Image from "next/image";
+import { formatETB } from "@/lib/currency";
 
 const SingleGridItem = ({ item }: { item: Product }) => {
   const { openModal } = useModalContext();
@@ -82,7 +83,7 @@ const SingleGridItem = ({ item }: { item: Product }) => {
             onClick={() => handleAddToCart()}
             className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark"
           >
-            Add to cart
+            Add to Bag
           </button>
 
           <button
@@ -151,9 +152,15 @@ const SingleGridItem = ({ item }: { item: Product }) => {
         <Link href="/shop-details"> {item.title} </Link>
       </h3>
 
+      {item.category ? (
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#8c6a43]">
+          {item.category}
+        </p>
+      ) : null}
+
       <span className="flex items-center gap-2 font-medium text-lg">
-        <span className="text-dark">${item.discountedPrice}</span>
-        <span className="text-dark-4 line-through">${item.price}</span>
+        <span className="text-dark">{formatETB(item.discountedPrice)}</span>
+        <span className="text-dark-4 line-through">{formatETB(item.price)}</span>
       </span>
     </div>
   );

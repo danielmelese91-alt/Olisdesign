@@ -4,7 +4,7 @@ const Billing = () => {
   return (
     <div className="mt-9">
       <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
-        Billing details
+        Client details
       </h2>
 
       <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5">
@@ -18,7 +18,7 @@ const Billing = () => {
               type="text"
               name="firstName"
               id="firstName"
-              placeholder="Jhon"
+              placeholder="Alem"
               className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
             />
           </div>
@@ -32,7 +32,7 @@ const Billing = () => {
               type="text"
               name="lastName"
               id="lastName"
-              placeholder="Deo"
+              placeholder="Bekele"
               className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
             />
           </div>
@@ -40,7 +40,7 @@ const Billing = () => {
 
         <div className="mb-5">
           <label htmlFor="companyName" className="block mb-2.5">
-            Company Name
+            Atelier or Company Name
           </label>
 
           <input
@@ -59,9 +59,9 @@ const Billing = () => {
 
           <div className="relative">
             <select className="w-full bg-gray-1 rounded-md border border-gray-3 text-dark-4 py-3 pl-5 pr-9 duration-200 appearance-none outline-none focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20">
-              <option value="0">Australia</option>
-              <option value="1">America</option>
-              <option value="2">England</option>
+              <option value="0">Ethiopia</option>
+              <option value="1">Kenya</option>
+              <option value="2">United Arab Emirates</option>
             </select>
 
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-dark-4">
@@ -199,7 +199,7 @@ const Billing = () => {
                 </span>
               </div>
             </div>
-            Create an Account
+            Save my Olies Design profile
           </label>
         </div>
       </div>

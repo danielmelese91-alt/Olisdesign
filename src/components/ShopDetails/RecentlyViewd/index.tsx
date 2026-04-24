@@ -1,17 +1,75 @@
 "use client";
-import React from "react";
-import shopData from "@/components/Shop/shopData";
+import React, { useEffect, useState } from "react";
 import ProductItem from "@/components/Common/ProductItem";
 import Image from "next/image";
-import Link from "next/link";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useCallback, useRef } from "react";
 import "swiper/css/navigation";
 import "swiper/css";
+import { Product } from "@/types/product";
+import { client } from "@/sanity/lib/client";
+import { groq } from "next-sanity";
+import { imageRefToUrl } from "@/sanity/lib/image";
+
+function hashStringToNumber(value: string) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i++) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) || 1;
+}
 
 const RecentlyViewdItems = () => {
   const sliderRef = useRef(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const data = await client.fetch(groq`*[_type == "product"] | order(_createdAt desc) [0...8] {
+          _id,
+          title,
+          slug,
+          "category": category->{ title },
+          price,
+          discountedPrice,
+          size,
+          material,
+          colorVariants,
+          description,
+          images
+        }`);
+        
+        const mapped = data.map((p: any) => ({
+          id: hashStringToNumber(p._id),
+          slug: p.slug?.current,
+          title: p.title || "Untitled",
+          reviews: 0,
+          price: p.price ?? 0,
+          discountedPrice: p.discountedPrice ?? p.price ?? 0,
+          category: p.category?.title || "Uncategorized",
+          categorySlug: p.slug?.current || "uncategorized",
+          size: p.size as Product["size"],
+          material: p.material,
+          colorSwatches: p.colorVariants?.map((v: any) => v.hex).filter(Boolean),
+          description: p.description,
+          imgs: {
+            previews: p.images?.map((i: any) => imageRefToUrl(i)).filter(Boolean) || [],
+            thumbnails: p.images?.map((i: any) => imageRefToUrl(i)).filter(Boolean) || [],
+          },
+        }));
+        setProducts(mapped);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
 
   const handlePrev = useCallback(() => {
     if (!sliderRef.current) return;
@@ -37,10 +95,10 @@ const RecentlyViewdItems = () => {
                   height={17}
                   alt="icon"
                 />
-                Categories
+                Recently Viewed
               </span>
               <h2 className="font-semibold text-xl xl:text-heading-5 text-dark">
-                Browse by Category
+                You May Also Like
               </h2>
             </div>
 
@@ -83,18 +141,26 @@ const RecentlyViewdItems = () => {
             </div>
           </div>
 
-          <Swiper
-            ref={sliderRef}
-            slidesPerView={4}
-            spaceBetween={20}
-            className="justify-between"
-          >
-            {shopData.map((item, key) => (
-              <SwiperSlide key={key}>
-                <ProductItem item={item} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {loading ? (
+            <div className="text-center py-12">Loading...</div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              No products found. Add products in Sanity Studio.
+            </div>
+          ) : (
+            <Swiper
+              ref={sliderRef}
+              slidesPerView={4}
+              spaceBetween={20}
+              className="justify-between"
+            >
+              {products.map((item, key) => (
+                <SwiperSlide key={key}>
+                  <ProductItem item={item} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
         </div>
       </div>
     </section>

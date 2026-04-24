@@ -1,14 +1,25 @@
 "use client";
 import React, { useState } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
+import CategoryFilterBar from "../Shop/CategoryFilterBar";
 
 import SingleGridItem from "../Shop/SingleGridItem";
 import SingleListItem from "../Shop/SingleListItem";
 import CustomSelect from "../ShopWithSidebar/CustomSelect";
+import { Product } from "@/types/product";
+import { StorefrontCategory } from "@/sanity/lib/storefront";
 
-import shopData from "../Shop/shopData";
-
-const ShopWithoutSidebar = () => {
+const ShopWithoutSidebar = ({
+  products,
+  categories,
+  currentCategory,
+  path,
+}: {
+  products: Product[];
+  categories: StorefrontCategory[];
+  currentCategory?: string;
+  path: string;
+}) => {
   const [productStyle, setProductStyle] = useState("grid");
 
   const options = [
@@ -25,6 +36,12 @@ const ShopWithoutSidebar = () => {
       />
       <section className="overflow-hidden relative pb-20 pt-5 lg:pt-20 xl:pt-28 bg-[#f3f4f6]">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
+          <CategoryFilterBar
+            categories={categories}
+            currentCategory={currentCategory}
+            path={path}
+          />
+
           <div className="flex gap-7.5">
             {/* // <!-- Content Start --> */}
             <div className="w-full">
@@ -35,8 +52,8 @@ const ShopWithoutSidebar = () => {
                     <CustomSelect options={options} />
 
                     <p>
-                      Showing <span className="text-dark">9 of 50</span>{" "}
-                      Products
+                      Showing <span className="text-dark">{products.length}</span>{" "}
+                      Pieces
                     </p>
                   </div>
 
@@ -129,12 +146,23 @@ const ShopWithoutSidebar = () => {
                     : "flex flex-col gap-7.5"
                 }`}
               >
-                {shopData.map((item, key) =>
-                  productStyle === "grid" ? (
-                    <SingleGridItem item={item} key={key} />
-                  ) : (
-                    <SingleListItem item={item} key={key} />
+                {products.length ? (
+                  products.map((item, key) =>
+                    productStyle === "grid" ? (
+                      <SingleGridItem item={item} key={key} />
+                    ) : (
+                      <SingleListItem item={item} key={key} />
+                    )
                   )
+                ) : (
+                  <div className="col-span-full rounded-[28px] border border-dashed border-[#c8b08b] bg-[#fbf8f0] px-8 py-14 text-center">
+                    <p className="font-serif text-3xl text-[#121212]">
+                      No pieces found in this collection.
+                    </p>
+                    <p className="mx-auto mt-3 max-w-[480px] text-[#4a4a4a]">
+                      Try another category to browse the full Olies Design edit.
+                    </p>
+                  </div>
                 )}
               </div>
               {/* <!-- Products Grid Tab Content End --> */}

@@ -6,6 +6,7 @@ import { removeItemFromWishlist } from "@/redux/features/wishlist-slice";
 import { addItemToCart } from "@/redux/features/cart-slice";
 
 import Image from "next/image";
+import { formatETB } from "@/lib/currency";
 
 const SingleItem = ({ item }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -70,7 +71,7 @@ const SingleItem = ({ item }) => {
       </div>
 
       <div className="min-w-[205px]">
-        <p className="text-dark">${item.discountedPrice}</p>
+        <p className="text-dark">{formatETB(item.discountedPrice)}</p>
       </div>
 
       <div className="min-w-[265px]">
@@ -98,7 +99,7 @@ const SingleItem = ({ item }) => {
             />
           </svg>
 
-          <span className="text-red"> Out of Stock </span>
+          <span className="text-red"> Made to order </span>
         </div>
       </div>
 
@@ -107,7 +108,7 @@ const SingleItem = ({ item }) => {
           onClick={() => handleAddToCart()}
           className="inline-flex text-dark hover:text-white bg-gray-1 border border-gray-3 py-2.5 px-6 rounded-md ease-out duration-200 hover:bg-blue hover:border-gray-3"
         >
-          Add to Cart
+          Add to Bag
         </button>
       </div>
     </div>

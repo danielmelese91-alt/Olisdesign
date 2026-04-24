@@ -6,6 +6,7 @@ import Newsletter from "../Common/Newsletter";
 import RecentlyViewdItems from "./RecentlyViewd";
 import { usePreviewSlider } from "@/app/context/PreviewSliderContext";
 import { useAppSelector } from "@/redux/store";
+import { formatETB } from "@/lib/currency";
 
 const ShopDetails = () => {
   const [activeColor, setActiveColor] = useState("blue");
@@ -96,7 +97,7 @@ const ShopDetails = () => {
       <Breadcrumb title={"Shop Details"} pages={["shop details"]} />
 
       {product.title === "" ? (
-        "Please add product"
+        "No pieces found in this collection."
       ) : (
         <>
           <section className="overflow-hidden relative pb-20 pt-5 lg:pt-20 xl:pt-28">
@@ -310,17 +311,17 @@ const ShopDetails = () => {
                         </defs>
                       </svg>
 
-                      <span className="text-green"> In Stock </span>
+                      <span className="text-green"> Available for tailoring </span>
                     </div>
                   </div>
 
                   <h3 className="font-medium text-custom-1 mb-4.5">
                     <span className="text-sm sm:text-base text-dark">
-                      Price: ${product.price}
+                      Price: {formatETB(product.price)}
                     </span>
                     <span className="line-through">
                       {" "}
-                      ${product.discountedPrice}{" "}
+                      {formatETB(product.discountedPrice)}{" "}
                     </span>
                   </h3>
 
@@ -344,7 +345,7 @@ const ShopDetails = () => {
                           fill="#3C50E0"
                         />
                       </svg>
-                      Free delivery available
+                      Complimentary atelier delivery available
                     </li>
 
                     <li className="flex items-center gap-2.5">

@@ -1,17 +1,33 @@
 import React from "react";
 import ShopWithoutSidebar from "@/components/ShopWithoutSidebar";
+import {
+  getStorefrontCategories,
+  getStorefrontProducts,
+} from "@/sanity/lib/storefront";
 
-import { Metadata } from "next";
-export const metadata: Metadata = {
-  title: "Shop Page | NextCommerce Nextjs E-commerce template",
-  description: "This is Shop Page for NextCommerce Template",
-  // other metadata
-};
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-const ShopWithoutSidebarPage = () => {
+const ShopWithoutSidebarPage = async ({
+  searchParams,
+}: {
+  searchParams?: Promise<{ category?: string }>;
+}) => {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const currentCategory = resolvedSearchParams?.category;
+  const [products, categories] = await Promise.all([
+    getStorefrontProducts(currentCategory),
+    getStorefrontCategories(),
+  ]);
+
   return (
     <main>
-      <ShopWithoutSidebar />
+      <ShopWithoutSidebar
+        products={products}
+        categories={categories}
+        currentCategory={currentCategory}
+        path="/shop-without-sidebar"
+      />
     </main>
   );
 };

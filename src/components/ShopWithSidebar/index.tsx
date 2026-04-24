@@ -1,17 +1,29 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
+import CategoryFilterBar from "../Shop/CategoryFilterBar";
 import CustomSelect from "./CustomSelect";
 import CategoryDropdown from "./CategoryDropdown";
 import GenderDropdown from "./GenderDropdown";
 import SizeDropdown from "./SizeDropdown";
 import ColorsDropdwon from "./ColorsDropdwon";
 import PriceDropdown from "./PriceDropdown";
-import shopData from "../Shop/shopData";
 import SingleGridItem from "../Shop/SingleGridItem";
 import SingleListItem from "../Shop/SingleListItem";
+import { Product } from "@/types/product";
+import { StorefrontCategory } from "@/sanity/lib/storefront";
 
-const ShopWithSidebar = () => {
+const ShopWithSidebar = ({
+  products,
+  categories,
+  currentCategory,
+  path,
+}: {
+  products: Product[];
+  categories: StorefrontCategory[];
+  currentCategory?: string;
+  path: string;
+}) => {
   const [productStyle, setProductStyle] = useState("grid");
   const [productSidebar, setProductSidebar] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
@@ -30,51 +42,21 @@ const ShopWithSidebar = () => {
     { label: "Old Products", value: "2" },
   ];
 
-  const categories = [
-    {
-      name: "Desktop",
-      products: 10,
-      isRefined: true,
-    },
-    {
-      name: "Laptop",
-      products: 12,
-      isRefined: false,
-    },
-    {
-      name: "Monitor",
-      products: 30,
-      isRefined: false,
-    },
-    {
-      name: "UPS",
-      products: 23,
-      isRefined: false,
-    },
-    {
-      name: "Phone",
-      products: 10,
-      isRefined: false,
-    },
-    {
-      name: "Watch",
-      products: 13,
-      isRefined: false,
-    },
-  ];
-
   const genders = [
     {
-      name: "Men",
-      products: 10,
+      name: "Tailored",
+      products: Math.max(products.filter((item) => item.category === "Men's Suits").length, 1),
     },
     {
-      name: "Women",
-      products: 23,
+      name: "Traditional",
+      products: Math.max(
+        products.filter((item) => item.category === "Traditional Wear").length,
+        1
+      ),
     },
     {
-      name: "Unisex",
-      products: 8,
+      name: "Accessories",
+      products: Math.max(products.filter((item) => item.category === "Accessories").length, 1),
     },
   ];
 
@@ -105,6 +87,12 @@ const ShopWithSidebar = () => {
       />
       <section className="overflow-hidden relative pb-20 pt-5 lg:pt-20 xl:pt-28 bg-[#f3f4f6]">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
+          <CategoryFilterBar
+            categories={categories}
+            currentCategory={currentCategory}
+            path={path}
+          />
+
           <div className="flex gap-7.5">
             {/* <!-- Sidebar Start --> */}
             <div
@@ -157,7 +145,11 @@ const ShopWithSidebar = () => {
                   </div>
 
                   {/* <!-- category box --> */}
-                  <CategoryDropdown categories={categories} />
+                  <CategoryDropdown
+                    categories={categories}
+                    currentCategory={currentCategory}
+                    path={path}
+                  />
 
                   {/* <!-- gender box --> */}
                   <GenderDropdown genders={genders} />
@@ -184,8 +176,8 @@ const ShopWithSidebar = () => {
                     <CustomSelect options={options} />
 
                     <p>
-                      Showing <span className="text-dark">9 of 50</span>{" "}
-                      Products
+                      Showing <span className="text-dark">{products.length}</span>{" "}
+                      Pieces
                     </p>
                   </div>
 
@@ -278,12 +270,23 @@ const ShopWithSidebar = () => {
                     : "flex flex-col gap-7.5"
                 }`}
               >
-                {shopData.map((item, key) =>
-                  productStyle === "grid" ? (
-                    <SingleGridItem item={item} key={key} />
-                  ) : (
-                    <SingleListItem item={item} key={key} />
+                {products.length ? (
+                  products.map((item, key) =>
+                    productStyle === "grid" ? (
+                      <SingleGridItem item={item} key={key} />
+                    ) : (
+                      <SingleListItem item={item} key={key} />
+                    )
                   )
+                ) : (
+                  <div className="col-span-full rounded-[28px] border border-dashed border-[#c8b08b] bg-[#fbf8f0] px-8 py-14 text-center">
+                    <p className="font-serif text-3xl text-[#121212]">
+                      No pieces found in this collection.
+                    </p>
+                    <p className="mx-auto mt-3 max-w-[480px] text-[#4a4a4a]">
+                      Try another category to browse the full Olies Design edit.
+                    </p>
+                  </div>
                 )}
               </div>
               {/* <!-- Products Grid Tab Content End --> */}

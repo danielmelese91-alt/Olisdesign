@@ -1,20 +1,37 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { StorefrontCategory } from "@/sanity/lib/storefront";
 
-const CategoryItem = ({ category }) => {
-  const [selected, setSelected] = useState(false);
+type CategoryDropdownProps = {
+  categories: StorefrontCategory[];
+  currentCategory?: string;
+  path: string;
+};
+
+const CategoryItem = ({
+  category,
+  currentCategory,
+  path,
+}: {
+  category: StorefrontCategory;
+  currentCategory?: string;
+  path: string;
+}) => {
+  const selected = currentCategory === category.slug;
+
   return (
-    <button
-      className={`${
-        selected && "text-blue"
-      } group flex items-center justify-between ease-out duration-200 hover:text-blue `}
-      onClick={() => setSelected(!selected)}
+    <Link
+      href={`${path}?category=${category.slug}`}
+      className={`group flex items-center justify-between ease-out duration-200 hover:text-blue ${
+        selected ? "text-blue" : ""
+      }`}
     >
       <div className="flex items-center gap-2">
         <div
-          className={`cursor-pointer flex items-center justify-center rounded w-4 h-4 border ${
-            selected ? "border-blue bg-blue" : "bg-white border-gray-3"
+          className={`flex h-4 w-4 items-center justify-center rounded border ${
+            selected ? "border-blue bg-blue" : "border-gray-3 bg-white"
           }`}
         >
           <svg
@@ -35,28 +52,32 @@ const CategoryItem = ({ category }) => {
           </svg>
         </div>
 
-        <span>{category.name}</span>
+        <span>{category.title}</span>
       </div>
 
       <span
-        className={`${
-          selected ? "text-white bg-blue" : "bg-gray-2"
-        } inline-flex rounded-[30px] text-custom-xs px-2 ease-out duration-200 group-hover:text-white group-hover:bg-blue`}
+        className={`inline-flex rounded-[30px] px-2 text-custom-xs ease-out duration-200 group-hover:bg-blue group-hover:text-white ${
+          selected ? "bg-blue text-white" : "bg-gray-2"
+        }`}
       >
-        {category.products}
+        {category.productCount}
       </span>
-    </button>
+    </Link>
   );
 };
 
-const CategoryDropdown = ({ categories }) => {
+const CategoryDropdown = ({
+  categories,
+  currentCategory,
+  path,
+}: CategoryDropdownProps) => {
   const [toggleDropdown, setToggleDropdown] = useState(true);
 
   return (
     <div className="bg-white shadow-1 rounded-lg">
       <div
-        onClick={(e) => {
-          e.preventDefault();
+        onClick={(event) => {
+          event.preventDefault();
           setToggleDropdown(!toggleDropdown);
         }}
         className={`cursor-pointer flex items-center justify-between py-3 pl-6 pr-5.5 ${
@@ -88,15 +109,52 @@ const CategoryDropdown = ({ categories }) => {
         </button>
       </div>
 
-      {/* dropdown && 'shadow-filter */}
-      {/* <!-- dropdown menu --> */}
       <div
         className={`flex-col gap-3 py-6 pl-6 pr-5.5 ${
           toggleDropdown ? "flex" : "hidden"
         }`}
       >
-        {categories.map((category, key) => (
-          <CategoryItem key={key} category={category} />
+        <Link
+          href={path}
+          className={`group flex items-center justify-between ease-out duration-200 hover:text-blue ${
+            !currentCategory ? "text-blue" : ""
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <div
+              className={`flex h-4 w-4 items-center justify-center rounded border ${
+                !currentCategory ? "border-blue bg-blue" : "border-gray-3 bg-white"
+              }`}
+            >
+              <svg
+                className={!currentCategory ? "block" : "hidden"}
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8.33317 2.5L3.74984 7.08333L1.6665 5"
+                  stroke="white"
+                  strokeWidth="1.94437"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+
+            <span>All Pieces</span>
+          </div>
+        </Link>
+
+        {categories.map((category) => (
+          <CategoryItem
+            key={category.id}
+            category={category}
+            currentCategory={currentCategory}
+            path={path}
+          />
         ))}
       </div>
     </div>
