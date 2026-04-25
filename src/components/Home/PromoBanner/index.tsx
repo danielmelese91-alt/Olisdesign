@@ -35,7 +35,7 @@ const defaultBanners: BannerData[] = [
     subtitle:
       "Discover ceremonial dressing, modern tailoring, and refined accessories designed to move from private fittings to grand occasions.",
     buttonText: "Discover The Collection",
-    image: "/images/promo/promo-01.png",
+    image: "/images/hero/slide-bridal.jpg",
     bgColor: "#F5F0E8",
     categoryPath: "/shop",
   },
@@ -45,7 +45,7 @@ const defaultBanners: BannerData[] = [
     title: "Ceremony, Reimagined",
     subtitle: "Hand-finished silhouettes",
     buttonText: "View Traditional Wear",
-    image: "/images/promo/promo-02.png",
+    image: "/images/hero/slide-modern.jpg",
     bgColor: "#EADFCF",
     categoryPath: "/shop?category=traditional",
   },
@@ -56,7 +56,7 @@ const defaultBanners: BannerData[] = [
     subtitle:
       "Scarves, belts, and occasion pieces crafted to complete the Olies Design wardrobe.",
     buttonText: "Shop Accessories",
-    image: "/images/promo/promo-03.png",
+    image: "/images/hero/slide-evening.jpg",
     bgColor: "#FFECE1",
     categoryPath: "/shop?category=accessories",
   },
@@ -93,7 +93,7 @@ const mapBanners = (items: SanityBanner[]): BannerData[] =>
     buttonText:
       item.buttonText || defaultBanners[index]?.buttonText || "Learn More",
     image:
-      imageRefToUrl(item.image) || defaultBanners[index]?.image || "/images/promo/promo-01.png",
+      imageRefToUrl(item.image) || defaultBanners[index]?.image || "/images/hero/slide-bridal.jpg",
     bgColor: item.bgColor || defaultBanners[index]?.bgColor,
     categoryPath: normalizeBannerHref(
       item.categoryPath || defaultBanners[index]?.categoryPath

@@ -139,7 +139,7 @@ const BlogDetails = () => {
                       className="inline-flex hover:text-white border border-gray-3 bg-white py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Desktop
+                      Atelier
                     </a>
                   </li>
 
@@ -148,7 +148,7 @@ const BlogDetails = () => {
                       className="inline-flex hover:text-white border border-gray-3 bg-white py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Macbook
+                      Styling
                     </a>
                   </li>
 
@@ -157,7 +157,7 @@ const BlogDetails = () => {
                       className="inline-flex hover:text-white border border-gray-3 bg-white py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      PC
+                      Fabrics
                     </a>
                   </li>
                 </ul>

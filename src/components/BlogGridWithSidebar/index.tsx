@@ -73,27 +73,27 @@ const BlogGridWithSidebar = () => {
 
   const categories = [
     {
-      name: "Desktop",
+      name: "Dresses",
       products: 10,
     },
     {
-      name: "Laptop",
+      name: "Scarves",
       products: 12,
     },
     {
-      name: "Monitor",
+      name: "Accessories",
       products: 30,
     },
     {
-      name: "UPS",
+      name: "Tailoring",
       products: 23,
     },
     {
-      name: "Phone",
+      name: "Bags",
       products: 10,
     },
     {
-      name: "Watch",
+      name: "Skirts",
       products: 13,
     },
   ];
@@ -269,21 +269,21 @@ const BlogGridWithSidebar = () => {
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Desktop
+                      Atelier
                     </a>
 
                     <a
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Macbook
+                      Styling
                     </a>
 
                     <a
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      PC
+                      Fabrics
                     </a>
 
                     <a
@@ -304,21 +304,21 @@ const BlogGridWithSidebar = () => {
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Mouse
+                      Fittings
                     </a>
 
                     <a
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Windows PC
+                      Fabric Care
                     </a>
 
                     <a
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Monitor
+                      Accessories
                     </a>
                   </div>
                 </div>

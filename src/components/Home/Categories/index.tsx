@@ -75,7 +75,7 @@ const Categories = () => {
           slug: category.slug || normalizeSlug(category.title) || category._id,
           img:
             imageRefToUrl(category.image) ||
-            "/images/categories/categories-01.png",
+            "/images/logo/Logo-mark.png",
         }));
 
         setCategories(mappedCategories);

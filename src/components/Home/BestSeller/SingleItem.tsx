@@ -40,6 +40,9 @@ const SingleItem = ({ item }: { item: Product }) => {
       })
     );
   };
+  const hasDiscount =
+    item.discountedPrice > 0 && item.discountedPrice < item.price;
+  const displayPrice = hasDiscount ? item.discountedPrice : item.price;
 
   return (
     <div className="group">
@@ -100,8 +103,10 @@ const SingleItem = ({ item }: { item: Product }) => {
           </h3>
 
           <span className="flex items-center justify-center gap-2 font-medium text-lg">
-            <span className="text-dark">{formatETB(item.discountedPrice)}</span>
-            <span className="text-dark-4 line-through">{formatETB(item.price)}</span>
+            <span className="text-dark">{formatETB(displayPrice)}</span>
+            {hasDiscount && (
+              <span className="text-dark-4 line-through">{formatETB(item.price)}</span>
+            )}
           </span>
         </div>
 

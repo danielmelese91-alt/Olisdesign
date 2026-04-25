@@ -214,7 +214,7 @@ const BlogDetailsWithSidebar = () => {
                           className="inline-flex hover:text-white border border-gray-3 bg-white py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                           href="#"
                         >
-                          Desktop
+                          Atelier
                         </a>
                       </li>
 
@@ -223,7 +223,7 @@ const BlogDetailsWithSidebar = () => {
                           className="inline-flex hover:text-white border border-gray-3 bg-white py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                           href="#"
                         >
-                          Macbook
+                          Styling
                         </a>
                       </li>
 
@@ -232,7 +232,7 @@ const BlogDetailsWithSidebar = () => {
                           className="inline-flex hover:text-white border border-gray-3 bg-white py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                           href="#"
                         >
-                          PC
+                          Fabrics
                         </a>
                       </li>
                     </ul>
@@ -357,56 +357,56 @@ const BlogDetailsWithSidebar = () => {
                 <div className="p-4 sm:p-6">
                   <div className="flex flex-col gap-3">
                     <button className="group flex items-center justify-between ease-out duration-200 text-dark hover:text-blue">
-                      Desktop
+                      Dresses
                       <span className="inline-flex rounded-[30px] bg-gray-2 text-custom-xs px-1.5 ease-out duration-200 group-hover:text-white group-hover:bg-blue">
                         12
                       </span>
                     </button>
 
                     <button className="group flex items-center justify-between ease-out duration-200 text-dark hover:text-blue">
-                      Laptop
+                      Scarves
                       <span className="inline-flex rounded-[30px] bg-gray-2 text-custom-xs px-1.5 ease-out duration-200 group-hover:text-white group-hover:bg-blue">
                         25
                       </span>
                     </button>
 
                     <button className="group flex items-center justify-between ease-out duration-200 text-dark hover:text-blue">
-                      Monitor
+                      Accessories
                       <span className="inline-flex rounded-[30px] bg-gray-2 text-custom-xs px-1.5 ease-out duration-200 group-hover:text-white group-hover:bg-blue">
                         23
                       </span>
                     </button>
 
                     <button className="group flex items-center justify-between ease-out duration-200 text-dark hover:text-blue">
-                      UPS
+                      Tailoring
                       <span className="inline-flex rounded-[30px] bg-gray-2 text-custom-xs px-1.5 ease-out duration-200 group-hover:text-white group-hover:bg-blue">
                         09
                       </span>
                     </button>
 
                     <button className="group flex items-center justify-between ease-out duration-200 text-dark hover:text-blue">
-                      Phone
+                      Bags
                       <span className="inline-flex rounded-[30px] bg-gray-2 text-custom-xs px-1.5 ease-out duration-200 group-hover:text-white group-hover:bg-blue">
                         54
                       </span>
                     </button>
 
                     <button className="group flex items-center justify-between ease-out duration-200 text-dark hover:text-blue">
-                      Tablet
+                      Shoes
                       <span className="inline-flex rounded-[30px] bg-gray-2 text-custom-xs px-1.5 ease-out duration-200 group-hover:text-white group-hover:bg-blue">
                         21
                       </span>
                     </button>
 
                     <button className="group flex items-center justify-between ease-out duration-200 text-dark hover:text-blue">
-                      Watch
+                      Skirts
                       <span className="inline-flex rounded-[30px] bg-gray-2 text-custom-xs px-1.5 ease-out duration-200 group-hover:text-white group-hover:bg-blue">
                         17
                       </span>
                     </button>
 
                     <button className="group flex items-center justify-between ease-out duration-200 text-dark hover:text-blue">
-                      Mouse
+                      Fittings
                       <span className="inline-flex rounded-[30px] bg-gray-2 text-custom-xs px-1.5 ease-out duration-200 group-hover:text-white group-hover:bg-blue">
                         08
                       </span>
@@ -427,21 +427,21 @@ const BlogDetailsWithSidebar = () => {
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Desktop
+                      Atelier
                     </a>
 
                     <a
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Macbook
+                      Styling
                     </a>
 
                     <a
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      PC
+                      Fabrics
                     </a>
 
                     <a
@@ -462,21 +462,21 @@ const BlogDetailsWithSidebar = () => {
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Mouse
+                      Fittings
                     </a>
 
                     <a
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Windows PC
+                      Fabric Care
                     </a>
 
                     <a
                       className="inline-flex hover:text-white border border-gray-3 py-2 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-blue"
                       href="#"
                     >
-                      Monitor
+                      Accessories
                     </a>
                   </div>
                 </div>

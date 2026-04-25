@@ -46,11 +46,26 @@ const ProductItem = ({ item }: { item: Product }) => {
   const handleProductDetails = () => {
     dispatch(updateproductDetails({ ...item }));
   };
+  const hasDiscount =
+    item.discountedPrice > 0 && item.discountedPrice < item.price;
+  const displayPrice = hasDiscount ? item.discountedPrice : item.price;
 
   return (
     <div className="group">
       <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-[#F6F7FB] min-h-[270px] mb-4">
-        <Image src={item.imgs.previews[0]} alt="" width={250} height={250} />
+        <Link
+          href={getProductPath(item)}
+          className="flex h-full w-full items-center justify-center"
+          aria-label={`View ${item.title}`}
+          onClick={() => handleProductDetails()}
+        >
+          <Image
+            src={item.imgs.previews[0]}
+            alt={item.title}
+            width={250}
+            height={250}
+          />
+        </Link>
 
         <div className="absolute left-0 bottom-0 translate-y-full w-full flex items-center justify-center gap-2.5 pb-5 ease-linear duration-200 group-hover:translate-y-0">
           <button
@@ -162,8 +177,10 @@ const ProductItem = ({ item }: { item: Product }) => {
       </h3>
 
       <span className="flex items-center gap-2 font-medium text-lg">
-        <span className="text-dark">{formatETB(item.discountedPrice)}</span>
-        <span className="text-dark-4 line-through">{formatETB(item.price)}</span>
+        <span className="text-dark">{formatETB(displayPrice)}</span>
+        {hasDiscount && (
+          <span className="text-dark-4 line-through">{formatETB(item.price)}</span>
+        )}
       </span>
     </div>
   );

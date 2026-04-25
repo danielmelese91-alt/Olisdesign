@@ -7,13 +7,13 @@ export const campaignSchema = {
       name: "title",
       title: "Main Title",
       type: "string",
-      description: "e.g., Enhance Your Music Experience",
+      description: "e.g., Atelier Campaign",
     },
     {
       name: "subtitle",
       title: "Subtitle",
       type: "string",
-      description: "e.g., The Havit H206d is a wired PC headphone.",
+      description: "e.g., Hand-finished occasion wear for refined evenings.",
     },
     {
       name: "productImage",
@@ -33,7 +33,7 @@ export const campaignSchema = {
       name: "buttonText",
       title: "Button Text",
       type: "string",
-      description: "e.g., Check it Out!",
+      description: "e.g., Shop The Edit",
     },
   ],
   preview: {

@@ -9,6 +9,7 @@ import Image from "next/image";
 import { usePreviewSlider } from "@/app/context/PreviewSliderContext";
 import { resetQuickView } from "@/redux/features/quickView-slice";
 import { updateproductDetails } from "@/redux/features/product-details";
+import { formatETB } from "@/lib/currency";
 
 const QuickViewModal = () => {
   const { isModalOpen, closeModal } = useModalContext();
@@ -150,7 +151,7 @@ const QuickViewModal = () => {
 
             <div className="max-w-[445px] w-full">
               <span className="inline-block text-custom-xs font-medium text-white py-1 px-3 bg-green mb-6.5">
-                SALE 20% OFF
+                {product.badge || "ATELIER PICK"}
               </span>
 
               <h3 className="font-semibold text-xl xl:text-heading-5 text-dark mb-4">
@@ -303,8 +304,8 @@ const QuickViewModal = () => {
               </div>
 
               <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has.
+                {product.description ||
+                  "A curated Oli's Design piece with refined styling and atelier support."}
               </p>
 
               <div className="flex flex-wrap justify-between gap-5 mt-6 mb-7.5">
@@ -315,11 +316,14 @@ const QuickViewModal = () => {
 
                   <span className="flex items-center gap-2">
                     <span className="font-semibold text-dark text-xl xl:text-heading-4">
-                      ${product.discountedPrice}
+                      {formatETB(product.discountedPrice || product.price)}
                     </span>
-                    <span className="font-medium text-dark-4 text-lg xl:text-2xl line-through">
-                      ${product.price}
-                    </span>
+                    {product.discountedPrice > 0 &&
+                      product.discountedPrice < product.price && (
+                        <span className="font-medium text-dark-4 text-lg xl:text-2xl line-through">
+                          {formatETB(product.price)}
+                        </span>
+                      )}
                   </span>
                 </div>
 

@@ -92,10 +92,16 @@ const Header = ({
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
+  const [cartNeedsAttention, setCartNeedsAttention] = useState(false);
+  const [previousCartCount, setPreviousCartCount] = useState(0);
   const { openCartModal } = useCartModalContext();
 
   const product = useAppSelector((state) => state.cartReducer.items);
   const totalPrice = useSelector(selectTotalPrice);
+  const cartItemCount = product.reduce(
+    (total, item) => total + (item.quantity || 1),
+    0
+  );
   const brandName =
     settings.brandName?.trim().toLowerCase() === "olies design"
       ? "Oli's Design"
@@ -119,8 +125,20 @@ const Header = ({
     document.body.classList.remove("overflow-hidden");
   }, [mobileSearchOpen, navigationOpen]);
 
+  useEffect(() => {
+    if (cartItemCount > previousCartCount) {
+      setCartNeedsAttention(true);
+    }
+
+    setPreviousCartCount(cartItemCount);
+  }, [cartItemCount, previousCartCount]);
+
   const closeNavigation = () => setNavigationOpen(false);
   const closeMobileSearch = () => setMobileSearchOpen(false);
+  const handleCartOpen = () => {
+    setCartNeedsAttention(false);
+    openCartModal();
+  };
   const toggleNavigation = () => {
     setMobileSearchOpen(false);
     setNavigationOpen((open) => !open);
@@ -198,12 +216,16 @@ const Header = ({
                   </div>
                 </Link>
 
-                <button onClick={openCartModal} className="flex min-w-0 items-center gap-2">
-                  <span className="relative inline-block text-[#4a5dff]">
+                <button onClick={handleCartOpen} className="flex min-w-0 items-center gap-2">
+                  <span
+                    className={`relative inline-block text-[#4a5dff] ${
+                      cartNeedsAttention && cartItemCount > 0 ? "cart-heartbeat" : ""
+                    }`}
+                  >
                     {cartIcon}
 
                     <span className="absolute -right-2 -top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-[10px] font-medium text-navy-900">
-                      {product.length}
+                      {cartItemCount}
                     </span>
                   </span>
 
@@ -352,12 +374,16 @@ const Header = ({
                     </div>
                   </Link>
 
-                  <button onClick={openCartModal} className="flex items-center gap-2.5">
-                    <span className="relative inline-block">
+                  <button onClick={handleCartOpen} className="flex items-center gap-2.5">
+                    <span
+                      className={`relative inline-block ${
+                        cartNeedsAttention && cartItemCount > 0 ? "cart-heartbeat" : ""
+                      }`}
+                    >
                       {cartIcon}
 
                       <span className="absolute -right-2 -top-2.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-gold text-2xs font-medium text-navy-900">
-                        {product.length}
+                        {cartItemCount}
                       </span>
                     </span>
 

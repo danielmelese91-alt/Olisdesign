@@ -4,6 +4,7 @@ import React from "react";
 import { Product } from "@/types/product";
 import { useModalContext } from "@/app/context/QuickViewModalContext";
 import { updateQuickView } from "@/redux/features/quickView-slice";
+import { updateproductDetails } from "@/redux/features/product-details";
 import { addItemToCart } from "@/redux/features/cart-slice";
 import { addItemToWishlist } from "@/redux/features/wishlist-slice";
 import { useDispatch } from "react-redux";
@@ -42,11 +43,30 @@ const SingleListItem = ({ item }: { item: Product }) => {
     );
   };
 
+  const handleProductDetails = () => {
+    dispatch(updateproductDetails({ ...item }));
+  };
+  const hasDiscount =
+    item.discountedPrice > 0 && item.discountedPrice < item.price;
+  const displayPrice = hasDiscount ? item.discountedPrice : item.price;
+
   return (
     <div className="group rounded-lg bg-white shadow-1">
       <div className="flex">
         <div className="shadow-list relative overflow-hidden flex items-center justify-center max-w-[270px] w-full sm:min-h-[270px] p-4">
-          <Image src={item.imgs.previews[0]} alt="" width={250} height={250} />
+          <Link
+            href={getProductPath(item)}
+            className="flex h-full w-full items-center justify-center"
+            aria-label={`View ${item.title}`}
+            onClick={handleProductDetails}
+          >
+            <Image
+              src={item.imgs.previews[0]}
+              alt={item.title}
+              width={250}
+              height={250}
+            />
+          </Link>
 
           <div className="absolute left-0 bottom-0 translate-y-full w-full flex items-center justify-center gap-2.5 pb-5 ease-linear duration-200 group-hover:translate-y-0">
             <button
@@ -124,8 +144,10 @@ const SingleListItem = ({ item }: { item: Product }) => {
             </h3>
 
             <span className="flex items-center gap-2 font-medium text-lg">
-              <span className="text-dark">{formatETB(item.discountedPrice)}</span>
-              <span className="text-dark-4 line-through">{formatETB(item.price)}</span>
+              <span className="text-dark">{formatETB(displayPrice)}</span>
+              {hasDiscount && (
+                <span className="text-dark-4 line-through">{formatETB(item.price)}</span>
+              )}
             </span>
           </div>
 

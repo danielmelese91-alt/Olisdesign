@@ -12,6 +12,9 @@ const PreviewSliderModal = () => {
   const { closePreviewModal, isModalPreviewOpen } = usePreviewSlider();
 
   const data = useAppSelector((state) => state.productDetailsReducer.value);
+  const previewImages = data.imgs?.previews?.length
+    ? data.imgs.previews
+    : data.imgs?.thumbnails || [];
 
   const sliderRef = useRef(null);
 
@@ -95,26 +98,18 @@ const PreviewSliderModal = () => {
       </div>
 
       <Swiper ref={sliderRef} slidesPerView={1} spaceBetween={20}>
-        <SwiperSlide>
-          <div className="flex justify-center items-center">
-            <Image
-              src={"/images/products/product-2-bg-1.png"}
-              alt={"product image"}
-              width={450}
-              height={450}
-            />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="flex justify-center items-center">
-            <Image
-              src={"/images/products/product-2-bg-1.png"}
-              alt={"product image"}
-              width={450}
-              height={450}
-            />
-          </div>
-        </SwiperSlide>
+        {previewImages.map((image) => (
+          <SwiperSlide key={image}>
+            <div className="flex justify-center items-center">
+              <Image
+                src={image}
+                alt={data.title || "product image"}
+                width={450}
+                height={450}
+              />
+            </div>
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );
