@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./css/euclid-circular-a-font.css";
 import "./css/style.css";
 import { getSiteSettings } from "@/sanity/lib/globals";
@@ -34,7 +35,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Script
+          src="https://telegram.org/js/telegram-web-app.js"
+          strategy="beforeInteractive"
+        />
+      </body>
     </html>
   );
 }
