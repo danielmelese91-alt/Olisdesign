@@ -5,9 +5,12 @@ import Image from "next/image";
 import Newsletter from "../Common/Newsletter";
 import RecentlyViewdItems from "./RecentlyViewd";
 import { usePreviewSlider } from "@/app/context/PreviewSliderContext";
-import { useAppSelector } from "@/redux/store";
+import { AppDispatch, useAppSelector } from "@/redux/store";
 import { formatETB } from "@/lib/currency";
 import { Product } from "@/types/product";
+import { useDispatch } from "react-redux";
+import { addItemToCart } from "@/redux/features/cart-slice";
+import { useRouter } from "next/navigation";
 
 const emptyProduct: Product = {
   title: "",
@@ -21,6 +24,8 @@ const emptyProduct: Product = {
 const ShopDetails = ({ product: productProp }: { product?: Product }) => {
   const [activeColor, setActiveColor] = useState("");
   const { openPreviewModal } = usePreviewSlider();
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const [previewImg, setPreviewImg] = useState(0);
 
   const [quantity, setQuantity] = useState(1);
@@ -106,6 +111,16 @@ const ShopDetails = ({ product: productProp }: { product?: Product }) => {
     openPreviewModal();
   };
 
+  const handlePurchaseNow = () => {
+    dispatch(
+      addItemToCart({
+        ...product,
+        quantity,
+      })
+    );
+    router.push("/checkout");
+  };
+
   return (
     <>
       <Breadcrumb title={"Shop Details"} pages={["shop details"]} />
@@ -177,14 +192,10 @@ const ShopDetails = ({ product: productProp }: { product?: Product }) => {
 
                 {/* <!-- product content --> */}
                 <div className="max-w-[539px] w-full">
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="mb-3">
                     <h2 className="font-semibold text-xl sm:text-2xl xl:text-custom-3 text-dark">
                       {product.title}
                     </h2>
-
-                    <div className="inline-flex font-medium text-custom-sm text-white bg-blue rounded py-0.5 px-2.5">
-                      {product.badge || "Atelier Pick"}
-                    </div>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-5.5 mb-4.5">
@@ -522,12 +533,13 @@ const ShopDetails = ({ product: productProp }: { product?: Product }) => {
                         </button>
                       </div>
 
-                      <a
-                        href="#"
+                      <button
+                        type="button"
+                        onClick={handlePurchaseNow}
                         className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark"
                       >
                         Purchase Now
-                      </a>
+                      </button>
 
                       <a
                         href="#"
