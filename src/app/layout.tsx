@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./css/euclid-circular-a-font.css";
 import "./css/style.css";
 import { getSiteSettings } from "@/sanity/lib/globals";
+import TelegramMiniAppInit from "./TelegramMiniAppInit";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -41,6 +42,7 @@ export default function RootLayout({
           src="https://telegram.org/js/telegram-web-app.js"
           strategy="beforeInteractive"
         />
+        <TelegramMiniAppInit />
       </body>
     </html>
   );
