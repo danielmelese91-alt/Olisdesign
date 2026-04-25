@@ -23,12 +23,19 @@ const telegramMiniAppInit = `
     const backgroundColor =
       tele.backgroundColor || tele.themeParams?.bg_color || "#F7F5F0";
     const textColor =
-      tele.headerColor || tele.themeParams?.text_color || "#1A2640";
+      tele.themeParams?.text_color || "#1A2640";
+    const headerColor =
+      tele.headerColor || tele.themeParams?.header_bg_color || backgroundColor;
 
     document.documentElement.style.setProperty("--tg-app-bg", backgroundColor);
     document.documentElement.style.setProperty("--tg-app-text", textColor);
+    document.documentElement.style.setProperty("--tg-header-bg", headerColor);
     document.body.style.backgroundColor = backgroundColor;
-    document.body.style.color = textColor;
+
+    const themeMeta = document.querySelector("meta[name='theme-color']");
+    if (themeMeta) {
+      themeMeta.setAttribute("content", headerColor);
+    }
   };
 
   syncTelegramTheme();
@@ -63,7 +70,6 @@ const telegramMiniAppInit = `
 
     .telegram-mini-app body {
       background: var(--tg-app-bg, #F7F5F0) !important;
-      color: var(--tg-app-text, #1A2640);
     }
   \`;
   document.head.appendChild(style);
@@ -105,9 +111,47 @@ const telegramMiniAppInit = `
 
   window.showOlisTelegramMainButton = showMainButton;
 
+  const goToShop = () => {
+    window.olisHaptic("light");
+    window.location.href = "/shop";
+  };
+
+  const clickPurchaseButton = () => {
+    window.olisHaptic("light");
+
+    const purchaseButton = Array.from(document.querySelectorAll("button, a")).find(
+      (element) => element.textContent?.trim().toLowerCase() === "purchase now"
+    );
+
+    if (purchaseButton instanceof HTMLElement) {
+      purchaseButton.click();
+      return;
+    }
+
+    window.location.href = "/checkout";
+  };
+
   const syncMainButtonToRoute = () => {
-    if (window.location.pathname === "/") {
-      showMainButton();
+    const path = window.location.pathname;
+
+    if (path === "/") {
+      showMainButton({ onClick: goToShop });
+      return;
+    }
+
+    if (path.startsWith("/products/")) {
+      showMainButton({
+        text: "PURCHASE NOW",
+        onClick: clickPurchaseButton,
+      });
+      return;
+    }
+
+    if (path === "/shop" || path === "/new-arrivals" || path === "/best-sellers") {
+      showMainButton({
+        text: "EXPLORE COLLECTION",
+        onClick: goToShop,
+      });
       return;
     }
 
